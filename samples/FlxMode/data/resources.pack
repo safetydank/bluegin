@@ -1,0 +1,24 @@
+TexturePack sprites sprite.png 256 256
+dirt            dirt.png
+dirt_top        dirt_top.png
+gibs            gibs.png
+notch           notch.png
+spawner_gibs    spawner_gibs.png
+spawner         spawner.png
+tech_tiles      tech_tiles.png
+spaceman        spaceman.png
+bot             bot.png
+jet             jet.png
+bullet          bullet.png
+bot_bullet      bot_bullet.png
+
+Font nokia nokia.fnt nokia.png
+Music mode        mode.mp3
+Sound SndJump     jump.mp3
+Sound SndExplode  asplode.mp3
+Sound SndExplode2 menu_hit_2.mp3
+Sound SndHit      hit.mp3
+Sound SndShoot    shoot.mp3
+Resource mode.oep
+Resource mode_level.oel
+

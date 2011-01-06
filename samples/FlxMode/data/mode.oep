@@ -1,0 +1,20 @@
+<project>
+    <name>Mode Tilemap</name>
+    <settings>
+        <defaultWidth>640</defaultWidth>
+        <defaultHeight>480</defaultHeight>
+        <workingDirectory>.</workingDirectory>
+    </settings>
+    <tilesets>
+        <tileset name="tech_tiles" image="tech_tiles.png" tileWidth="8" tileHeight="8" />
+    </tilesets>
+    <objects>
+        <object name="player" image="spaceman.png" width="8" height="8" limit="1" tile="true" />
+        <object name="spawner" image="spawner.png" width="24" height="24" tile="true" />
+    </objects>
+	<layers>
+        <tiles name="tilesAbove" gridSize="8" exportTileSize="true" exportTileIDs="true" />
+        <objects name="actors" gridSize="8" />
+	</layers>
+</project>
+

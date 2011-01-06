@@ -1,0 +1,42 @@
+BlueGin Game Engine
+===================
+
+BlueGin is a C++ game engine for Android.  
+
+- Based on a port of the Flixel game engine
+- Uses the Cinder framework for OpenGL rendering 
+- Provides a manager for packing and accessing assets
+- Includes a desktop runtime, for testing and optimizing on PC at native speeds
+
+
+Recommended setup
+-----------------
+
+BlueGin requires the Android native development kit (NDK) r5 for building.  On
+the desktop it is linked with Cinder and Boost.  The Android runtime requires
+Boost to build.
+
+1.  Install Cinder including Boost v1.44 (or newer)
+
+2.  Edit bluegin/Common.mk and set BOOST_SRC to your Boost path.
+
+3.  Build BlueGin game engine (native and Java libraries)
+
+% cd bluegin
+% android update project --path .     /* use android.bat on Windows */
+% ndk-build
+% ant jar
+
+4.  Build individual samples
+
+% cd samples/<SAMPLE>
+% python ../../tools/apack.py data    /* for FlxMode only, see below */
+% ndk-build
+% ant debug
+
+The asset packer script (tools/apack.py) requires Python and the Python Imaging
+Library.  It copies assets specified in a resource.pack file and packs textures
+for sprite batching.  Identifiers from a resource.pack file are used to select
+assets in code.
+
+

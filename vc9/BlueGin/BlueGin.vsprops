@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Bluegin-release"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="$(BLUEGIN_INCLUDE)"
+		PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;NOMINMAX"
+		RuntimeLibrary="0"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="cinder.lib ws2_32.lib"
+		AdditionalLibraryDirectories="$(CINDER_DIR)\lib;$(CINDER_DIR)\lib\msw"
+	/>
+	<UserMacro
+		Name="CINDER_DIR"
+		Value="d:\src\Cinder"
+	/>
+	<UserMacro
+		Name="BLUEGIN_DIR"
+		Value="d:\code\bluegin-android\bluegin"
+	/>
+    <UserMacro
+        Name="BLUEGIN_INCLUDE"
+        Value="$(CINDER_DIR)\include;$(CINDER_DIR)\boost;$(BLUEGIN_DIR)\jni\bluegin\include;$(BLUEGIN_DIR)\jni\flx\include;$(BLUEGIN_DIR)\jni\Box2D\Box2D_v2.1.2\Box2D;$(BLUEGIN_DIR)\jni\rapidxml\rapidxml-1.13"
+    />
+</VisualStudioPropertySheet>
