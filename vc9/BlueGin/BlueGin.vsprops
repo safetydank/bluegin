@@ -21,7 +21,7 @@
 	/>
 	<UserMacro
 		Name="BLUEGIN_DIR"
-		Value="d:\code\bluegin-android\bluegin"
+		Value="d:\code\bluegin\bluegin"
 	/>
     <UserMacro
         Name="BLUEGIN_INCLUDE"

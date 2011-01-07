@@ -207,7 +207,6 @@ void Sprite::addAnimation(const char* name, int frameCount, int frames[], float 
 // void addAnimationCallback();
 void Sprite::play(const char* name, bool force)
 {
-    Log("Play animation %s", name);
     string sname(name);
     if (!force && (_curAnim != NULL) && (name == _curAnim->name)) return;
     _curFrame = 0;

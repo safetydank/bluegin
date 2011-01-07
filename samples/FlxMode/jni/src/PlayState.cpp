@@ -14,6 +14,8 @@
 
 #include "cinder/Color.h"
 
+const char* MusicRun = "run";
+
 using namespace ci;
 using namespace bluegin;
 using namespace flx;

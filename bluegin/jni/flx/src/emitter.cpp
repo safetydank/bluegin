@@ -64,7 +64,7 @@ Emitter& Emitter::createSprites(bluegin::Graphic Graphics,
         {
             sw = s->width;
             sh = s->height;
-            s->width *= Collide;
+            s->width  *= Collide;
             s->height *= Collide;
             s->offset.x = (sw - s->width)/2;
             s->offset.y = (sh - s->height)/2;

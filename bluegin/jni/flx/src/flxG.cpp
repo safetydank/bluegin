@@ -162,12 +162,17 @@ AudioPtr FlxGlobal::play(AudioSourcePtr source, float volume, bool looped)
 
 AudioPtr FlxGlobal::playMusic(AudioSourcePtr source, float volume)
 {
-    if (FlxG.music) {
-        FlxG.music->stop();
-    }
+    stopMusic();
     FlxG.music = AudioPtr(new Music(source));
     music->play();
     return music;
+}
+
+void FlxGlobal::stopMusic()
+{
+    if (FlxG.music) {
+        FlxG.music->stop();
+    }
 }
 
 bool FlxGlobal::getMute()
