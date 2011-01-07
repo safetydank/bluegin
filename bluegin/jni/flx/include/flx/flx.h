@@ -145,7 +145,7 @@ namespace FlxU {
      * Helps to eliminate false collisions and/or rendering glitches caused by rounding errors
      * Lower values result in spurious collisions on Android
      */
-    const float roundingError = 1e-4f;
+    const float roundingError = 1e-3f;
 
     /**
      * Helper function to convert from a 32-bit hex color value to a Cinder Color

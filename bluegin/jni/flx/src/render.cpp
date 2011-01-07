@@ -43,6 +43,9 @@ Renderer::Renderer()
     mTexCoords.resize(TexCount);
     mColors.resize(IndexCount);
 
+    mFirstColor = &(mColors[0]);
+    mFirstPosition = &(mPositions[0]);
+    mFirstTexCoord = &(mTexCoords[0]);
     mIndexCount = 0;
     mTextBatch = false;
 }
@@ -80,7 +83,7 @@ void Renderer::renderQuad(ColorA color, float width, float height, Rectf& texRec
     int iIndex  = mIndexCount;
 
     Vec2f off = (offset == NULL) ? Vec2f(0,0) : *offset;
-    Vec3f* itVertex = &(*(mPositions.begin())) + startVertex;
+    Vec3f* itVertex = mFirstPosition + startVertex;
 
     itVertex->x = 0 + off.x;      itVertex->y = 0 + off.y;       ++itVertex;
     itVertex->x = width + off.x;  itVertex->y = 0 + off.y;       ++itVertex;
@@ -92,14 +95,14 @@ void Renderer::renderQuad(ColorA color, float width, float height, Rectf& texRec
     //  transform quad using a supplied matrix
     if (xform != NULL) {
         // for (vector<Vec3f>::iterator it=mPositions.begin() + startVertex; 
-        Vec3f* startPos = &(*(mPositions.begin())) + startVertex;
+        Vec3f* startPos = mFirstPosition + startVertex;
         Vec3f* stopPos = startPos + 6;
         for (Vec3f* it=startPos; it != stopPos; ++it) {
             transform(*it, *xform);
         }
     }
 
-    Vec2f* itTexCoord = &(*(mTexCoords.begin())) + startVertex;
+    Vec2f* itTexCoord = mFirstTexCoord + startVertex;
 
     itTexCoord->x = texRect.x1;   itTexCoord->y = texRect.y1;  ++itTexCoord;
     itTexCoord->x = texRect.x2;   itTexCoord->y = texRect.y1;  ++itTexCoord;
@@ -108,7 +111,7 @@ void Renderer::renderQuad(ColorA color, float width, float height, Rectf& texRec
     itTexCoord->x = texRect.x2;   itTexCoord->y = texRect.y2;  ++itTexCoord;
     itTexCoord->x = texRect.x1;   itTexCoord->y = texRect.y2;  ++itTexCoord;
 
-    ColorA* itColor = &(*(mColors.begin()))+startVertex;
+    ColorA* itColor = mFirstColor+startVertex;
     for (int i=0; i<6; ++i, ++itColor) {
         *itColor = color;
     }

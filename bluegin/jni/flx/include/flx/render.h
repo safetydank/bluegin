@@ -55,6 +55,10 @@ protected:
     vector<ci::Vec2f>  mTexCoords;
     vector<ci::ColorA> mColors;
 
+    ci::ColorA* mFirstColor;
+    ci::Vec2f* mFirstTexCoord;
+    ci::Vec3f* mFirstPosition;
+
     int mIndexCount;
 
     bool mTextBatch;
