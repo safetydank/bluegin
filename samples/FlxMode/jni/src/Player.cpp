@@ -55,7 +55,7 @@ Player::Player(int X, int Y, vector<ObjectPtr>& Bullets, EmitterPtr Gibs)
     _bulletDelay = 0;
 
     // jets
-    _jets = EmitterPtr(new Emitter());
+    _jets = Emitter::create();
     _jets->setRotation();
     _jets->gravity = 0;
     _jets->createSprites(res.graphic("jet"), 15, 0, false);

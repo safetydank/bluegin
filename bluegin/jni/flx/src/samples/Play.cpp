@@ -107,7 +107,7 @@ void Play::create()
 {
     ResourceManager& res = *(FlxG.resources);
 
-    shared_ptr<Text> ptext(new Text(0, 0, 100, "HELLO, world!"));
+    TextPtr ptext = Text::create(0, 0, 100, "HELLO, world!");
     Text& text = *ptext;
     text.setFont(res.font("font_a"));
     text.setColor(Color::black());
@@ -117,7 +117,7 @@ void Play::create()
     add(ObjectPtr(new Player(20, 50, res.graphic("player"))));
     add(ObjectPtr(new Elevator(20, 100, 40, res.graphic("gibs"))));
 
-    shared_ptr<Emitter> pdisp(new Emitter(200, 40));
+    EmitterPtr pdisp = Emitter::create(200, 40);
     Emitter& dispenser = *pdisp;
     dispenser.setSize(8.0f, 24.0f);
     dispenser.setXSpeed(-100, 200);

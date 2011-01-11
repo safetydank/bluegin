@@ -13,6 +13,9 @@ const int OBJECT = -1;
 class Group;
 class QuadTree;
 
+class Object;
+typedef shared_ptr<Object> ObjectPtr;
+
 /**
  * This is the base class for most of the display objects (<code>Sprite</code>, <code>Text</code>, etc).
  * It includes some basic attributes about game objects, including retro-style flickering,
@@ -21,6 +24,8 @@ class QuadTree;
 class Object : public Rect
 {
 public:
+    static ObjectPtr create(float x=0, float y=0, float w=0, float h=0);
+
     Object(float x=0, float y=0, float w=0, float h=0);
     virtual ~Object();
 
@@ -355,7 +360,5 @@ public:
     virtual int getFrameWidth() { return 0; }
     virtual int getFrameHeight() { return 0; }
 };
-
-typedef shared_ptr<Object> ObjectPtr;
 
 }

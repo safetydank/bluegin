@@ -7,6 +7,11 @@ using namespace cinder;
 
 extern FlxGlobal FlxG;
 
+EmitterPtr Emitter::create(float X, float Y)
+{
+    return EmitterPtr(new Emitter(X, Y));
+}
+    
 Emitter::Emitter(float X, float Y) : Group()
 {
     x = X;
@@ -44,12 +49,12 @@ Emitter& Emitter::createSprites(bluegin::Graphic Graphics,
     float sh;
     if(Multiple)
     {
-        s  = SpritePtr(new Sprite(0,0,Graphics));
+        s  = Sprite::create(0, 0, Graphics);
         tf = static_cast<int>(s->width / s->height);
     }
     for(int i = 0; i < Quantity; ++i)
     {
-        s = SpritePtr(new Sprite(0, 0));
+        s = Sprite::create();
         if(Multiple)
         {
             r = static_cast<int>(FlxU::random()*tf);

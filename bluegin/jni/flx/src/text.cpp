@@ -9,6 +9,12 @@ using namespace bluegin;
 
 extern FlxGlobal FlxG;
 
+TextPtr Text::create(float X, float Y, int Width, std::string text)
+{
+    TextPtr txt(new Text(X, Y, Width, text));
+    return txt;
+}
+
 Text::Text(float X, float Y, int Width, std::string Text)
     : Sprite(X, Y)
 {

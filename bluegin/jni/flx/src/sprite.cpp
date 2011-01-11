@@ -13,6 +13,12 @@ using namespace flx;
 
 extern FlxGlobal FlxG;
 
+SpritePtr Sprite::create(float x, float y, bluegin::Graphic graphic)
+{
+    SpritePtr sp(new Sprite(x, y, graphic));
+    return sp;
+}
+
 Sprite::Sprite(float x, float y, bluegin::Graphic graphic)
     : Object(x, y, 0, 0)
 {

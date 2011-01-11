@@ -6,6 +6,10 @@
 using namespace cinder;
 using namespace flx;
 
+GroupPtr Group::create()
+{
+    return GroupPtr(new Group());
+}
 
 Group::Group() : Object(0, 0, 0, 0)
 {

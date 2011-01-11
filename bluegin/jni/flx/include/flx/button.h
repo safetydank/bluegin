@@ -10,6 +10,9 @@ namespace flx {
 
 typedef void (*ButtonCallback)(void*);
 
+class Button;
+typedef shared_ptr<Button> ButtonPtr;
+
 /**
  * A simple button class that calls a function when clicked by the mouse.
  * Supports labels, highlight states, and parallax scrolling.
@@ -55,6 +58,8 @@ protected:
     ci::Vec2f _sf;
     
 public:
+    static ButtonPtr create(int X, int Y, ButtonCallback Callback);
+
     /**
      * Creates a new <code>Button</code> object with a gray background
      * and a callback function
@@ -105,8 +110,6 @@ public:
     virtual void handleTouchUp(float X, float Y, float XScroll, float YScroll);
 
 };
-
-typedef shared_ptr<Button> ButtonPtr;
 
 }
 

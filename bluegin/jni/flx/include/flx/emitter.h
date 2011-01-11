@@ -7,6 +7,9 @@
 
 namespace flx {
 
+class Emitter;
+typedef shared_ptr<Emitter> EmitterPtr;
+
 /**
  * <code>Emitter</code> is a lightweight particle emitter.
  * It can be used for one-time explosions or for
@@ -85,6 +88,8 @@ protected:
     int _counter;
 
 public:
+    static EmitterPtr create(float X=0, float Y=0);
+
     /**
      * Creates a new <code>Emitter</code> object at a specific position.
      * Does not automatically generate or attach particles!
@@ -191,7 +196,5 @@ public:
      */
     virtual void kill();
 };
-
-typedef shared_ptr<Emitter> EmitterPtr;
 
 }

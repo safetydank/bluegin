@@ -31,26 +31,26 @@ void PlayState::create()
     _reload = false;
 
     //get the gibs set up and out of the way
-    _littleGibs = EmitterPtr(new Emitter());
+    _littleGibs = Emitter::create();
     _littleGibs->delay = 3;
     _littleGibs->setXSpeed(-150,150);
     _littleGibs->setYSpeed(-200,0);
     _littleGibs->setRotation(-720,-720);
     _littleGibs->createSprites(res.graphic("gibs"),100,10,true,0.5f/*,0.65f*/);
-    _bigGibs = EmitterPtr(new Emitter());
+    _bigGibs = Emitter::create();
     _bigGibs->setXSpeed(-200,200);
     _bigGibs->setYSpeed(-300,0);
     _bigGibs->setRotation(-720,-720);
     _bigGibs->createSprites(res.graphic("spawner_gibs"),50,20,true,0.5/*,0.35*/);
 
     //level generation needs to know about the spawners (and thusly the bots, players, etc)
-    _blocks = GroupPtr(new Group());
-    _decorations = GroupPtr(new Group());
-    _bullets = GroupPtr(new Group());
-    _player = shared_ptr<Player>(new Player(300,311,_bullets->members,_littleGibs));
-    _bots = GroupPtr(new Group());
-    _botBullets = GroupPtr(new Group());
-    _spawners = GroupPtr(new Group());
+    _blocks 	 = Group::create();
+    _decorations = Group::create();
+    _bullets     = Group::create();
+    _player 	 = shared_ptr<Player>(new Player(300,311,_bullets->members,_littleGibs));
+    _bots 		 = Group::create();
+    _botBullets  = Group::create();
+    _spawners    = Group::create();
 
     //simple procedural level generation
     int i;
@@ -122,11 +122,11 @@ void PlayState::create()
 
     //finally we are going to sort things into a couple of helper groups.
     //we don't add these to the state, we just use them for collisions later!
-    _enemies = GroupPtr(new Group());
+    _enemies = Group::create();
     _enemies->add(_botBullets);
     _enemies->add(_spawners);
     _enemies->add(_bots);
-    _objects = GroupPtr(new Group());
+    _objects = Group::create();
     _objects->add(_botBullets);
     _objects->add(_bullets);
     _objects->add(_bots);
@@ -149,7 +149,7 @@ void PlayState::create()
     //     FlxG.scores.push(0);
     // }
 
-    _score = TextPtr(new Text(0, 0, 100));
+    _score = Text::create(0, 0, 100);
     _score->setFont(res.font("nokia"));
     _score->setColor(ColorA(0.85f, 0.92f, 0.64f, 0.9f));
     _score->setSize(18.0f);
@@ -203,7 +203,7 @@ void PlayState::create()
     _fading = false;
     State::bgColor = Color::black();
 
-     _accelText = TextPtr(new Text(0, 0, 100, "HELLO"));
+     _accelText = Text::create(0, 0, 100, "HELLO");
      _accelText->setFont(res.font("nokia"));
      _accelText->setSize(12.0f);
     // add(_accelText);

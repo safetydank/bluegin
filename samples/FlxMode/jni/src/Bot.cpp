@@ -32,7 +32,7 @@ Bot::Bot(int xPos,int yPos,vector<ObjectPtr>& Bullets,EmitterPtr Gibs,shared_ptr
     drag.y = 80;
 
     //Jet effect that shoots out from behind the bot
-    _jets = EmitterPtr(new Emitter());
+    _jets = Emitter::create();
     _jets->setRotation();
     _jets->gravity = 0;
     _jets->createSprites(res.graphic("jet"),15,0,false);

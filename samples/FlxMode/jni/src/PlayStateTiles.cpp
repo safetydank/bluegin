@@ -26,23 +26,23 @@ void PlayStateTiles::create()
     ResourceManager& res = *(FlxG.resources);
 
     //get the gibs set up and out of the way
-    _littleGibs = EmitterPtr(new Emitter());
+    _littleGibs = Emitter::create();
     _littleGibs->delay = 3;
     _littleGibs->setXSpeed(-150,150);
     _littleGibs->setYSpeed(-200,0);
     _littleGibs->setRotation(-720,-720);
     _littleGibs->createSprites(res.graphic("gibs"),100,10,true,0.5f/*,0.65f*/);
-    _bigGibs = EmitterPtr(new Emitter());
+    _bigGibs = Emitter::create();
     _bigGibs->setXSpeed(-200,200);
     _bigGibs->setYSpeed(-300,0);
     _bigGibs->setRotation(-720,-720);
     _bigGibs->createSprites(res.graphic("spawner_gibs"),50,20,true,0.5/*,0.35*/);
     
-    _bullets = GroupPtr(new Group());
+    _bullets = Group::create();
     _player = shared_ptr<Player>(new Player(0,0,_bullets->members,_littleGibs));
-    _bots = GroupPtr(new Group());
-    _botBullets = GroupPtr(new Group());
-    _spawners = GroupPtr(new Group());
+    _bots = Group::create();
+    _botBullets = Group::create();
+    _spawners = Group::create();
 
     //create tilemap
     _tilemap = TilemapPtr(new Tilemap());
@@ -84,11 +84,11 @@ void PlayStateTiles::create()
     add(_botBullets);
     add(_bullets);
 
-    _enemies = GroupPtr(new Group());
+    _enemies = Group::create();
     _enemies->add(_botBullets);
     _enemies->add(_spawners);
     _enemies->add(_bots);
-    _objects = GroupPtr(new Group());
+    _objects = Group::create();
     _objects->add(_botBullets);
     _objects->add(_bullets);
     _objects->add(_bots);

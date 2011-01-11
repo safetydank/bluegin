@@ -6,6 +6,12 @@ using namespace flx;
 
 extern FlxGlobal FlxG;
 
+ButtonPtr Button::create(int X, int Y, ButtonCallback Callback)
+{
+    ButtonPtr bp(new Button(X, Y, Callback));
+    return bp;
+}
+
 Button::Button(int X,int Y,ButtonCallback Callback)
     : Group()
 {
@@ -13,11 +19,11 @@ Button::Button(int X,int Y,ButtonCallback Callback)
     y = Y;
     width = 100;
     height = 20;
-    _off = SpritePtr(new Sprite());
+    _off = Sprite::create();
     _off->createGraphic(width,height,FlxU::color(0xff7f7f7f));
     _off->solid = false;
     add(_off,true);
-    _on  = SpritePtr(new Sprite());
+    _on = Sprite::create();
     _on->createGraphic(width,height,FlxU::color(0xffffffff));
     _on->solid = false;
     add(_on,true);

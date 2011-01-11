@@ -5,6 +5,9 @@
 
 namespace flx {
     
+class Group;
+typedef shared_ptr<Group> GroupPtr;
+
 /**
  * This is an organizational class that can update and render a bunch of <code>Object</code>s.
  * NOTE: Although <code>Group</code> extends <code>Object</code>, it will not automatically
@@ -13,6 +16,8 @@ namespace flx {
 class Group : public Object
 {
 public:
+    static GroupPtr create();
+
     Group();
     virtual ~Group();
 
@@ -198,7 +203,5 @@ protected:
      */
     void destroyMembers();
 };
-
-typedef shared_ptr<Group> GroupPtr;
 
 }

@@ -23,12 +23,17 @@ enum Direction_t
     DOWN
 };
 
+class Sprite;
+typedef shared_ptr<Sprite> SpritePtr;
+
 /**
 * The main "game object" class, handles basic physics and animation.
 */
 class Sprite : public Object
 {
 public:
+    static SpritePtr create(float x=0, float y=0, bluegin::Graphic graphic=bluegin::Graphic());
+
     Sprite(float x=0, float y=0, bluegin::Graphic graphic=bluegin::Graphic());
     virtual ~Sprite() { }
 
@@ -217,8 +222,6 @@ public:
     virtual int getFrameWidth() { return frameWidth; }
     virtual int getFrameHeight() { return frameHeight; }
 };
-
-typedef shared_ptr<Sprite> SpritePtr;
 
 }
 

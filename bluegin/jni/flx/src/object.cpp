@@ -8,6 +8,12 @@ using namespace flx;
 
 extern FlxGlobal FlxG;
 
+ObjectPtr Object::create(float x, float y, float w, float h)
+{
+    ObjectPtr obj(new Object(x, y, w, h));
+    return obj;
+}
+
 Object::Object(float x, float y, float w, float h)
     : Rect(x, y, w, h), _kind(OBJECT)
 {

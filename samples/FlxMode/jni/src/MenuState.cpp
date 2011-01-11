@@ -42,7 +42,7 @@ void MenuState::create()
 
     int i;
 
-    _gibs = EmitterPtr(new Emitter(FlxG.width/2-50,FlxG.height/2-10));
+    _gibs = Emitter::create(FlxG.width/2-50,FlxG.height/2-10);
     _gibs->setSize(100,30);
     _gibs->setYSpeed(-200,-20);
     _gibs->setRotation(-720,720);
@@ -50,12 +50,12 @@ void MenuState::create()
     _gibs->createSprites(res.graphic("gibs"),1000,32);
     add(_gibs);
 
-    _t1 = TextPtr(new Text(FlxG.width,FlxG.height/4,80,"mo"));
+    _t1 = Text::create(FlxG.width,FlxG.height/4,80,"mo");
     _t1->setSize(32.0f);
     _t1->setColor(FlxU::color(0x3a5c39));
     add(_t1);
 
-    _t2 = TextPtr(new Text(-60,FlxG.height/4,80,"de"));
+    _t2 = TextPtr::create(-60,FlxG.height/4,80,"de");
     _t2->setSize(_t1->getSize());
     _t2->setColor(_t1->getColor());
     add(_t2);
@@ -117,7 +117,7 @@ void MenuState::update()
         ButtonPtr b;
 
         ResourceManager& res = *(FlxG.resources);
-        TextPtr t1 = TextPtr(new Text(FlxG.width / 2 - 200,FlxG.height/3+39,400,"by Adam Atomic"));
+        TextPtr t1 = Text::create(FlxG.width / 2 - 200,FlxG.height/3+39,400,"by Adam Atomic");
         t1->setAlignment(ALIGN_CENTER);
         t1->setColor(FlxU::color(0x3a5c39));
         add(t1);
@@ -125,16 +125,16 @@ void MenuState::update()
         //flixel button
         // add((new FlxSprite(t1m+1,FlxG.height/3+53)).createGraphic(106,19,0xff131c1b));
 
-        b = ButtonPtr(new Button(t1m,FlxG.height/3+54,onFlixel));
-        SpritePtr image(new Sprite());
+        b = Button::create(t1m,FlxG.height/3+54,onFlixel);
+        SpritePtr image = Sprite::create();
         image->createGraphic(84, 15, FlxU::color(0xff3a5c39));
-        SpritePtr imageHi(new Sprite());
+        SpritePtr imageHi = Sprite::create();
         imageHi->createGraphic(84, 15,FlxU::color(0xff729954));
         b->loadGraphic(image, imageHi);
-        t1 = TextPtr(new Text(1,3,84,"www.flixel.org"));
+        t1 = Text::create(1,3,84,"www.flixel.org");
         t1->setColor(FlxU::color(0x729954));
         t1->setAlignment(ALIGN_CENTER);
-        t2 = TextPtr(new Text(t1->x,t1->y,t1->width,t1->getText()));
+        t2 = Text::create(t1->x,t1->y,t1->width,t1->getText());
         t2->setColor(FlxU::color(0xd8eba2));
         t2->setAlignment(t1->getAlignment());
         b->loadText(t1,t2);
@@ -152,17 +152,17 @@ void MenuState::update()
     //    // add(b);
 
         //play button
-        _b = ButtonPtr(new Button(t1m,FlxG.height/3+100,onButton));
-        image = SpritePtr(new Sprite());
+        _b = Button::create(t1m,FlxG.height/3+100,onButton);
+        image = Sprite::create();
         image->createGraphic(84, 30, FlxU::color(0xff3a5c39));
-        imageHi = SpritePtr(new Sprite());
+        imageHi = Sprite::create();
         imageHi->createGraphic(84, 30, FlxU::color(0xff729954));
         _b->loadGraphic(image, imageHi);
-        t1 = TextPtr(new Text(0,5,84,"PLAY"));
+        t1 = Text::create(0,5,84,"PLAY");
         t1->setColor(FlxU::color(0x729954));
         t1->setSize(20.0f);
         t1->setAlignment(ALIGN_CENTER);
-        t2 = TextPtr(new Text(t1->x,t1->y,t1->width,t1->getText()));
+        t2 = Text::create(t1->x,t1->y,t1->width,t1->getText());
         t2->setColor(FlxU::color(0xd8eba2));
         t2->setSize(20.0f);
         t2->setAlignment(t1->getAlignment());

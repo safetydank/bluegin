@@ -16,6 +16,9 @@ enum TextAlign
     ALIGN_CENTER = 2
 };
 
+class Text;
+typedef shared_ptr<Text> TextPtr;
+
 /**
  * Extends <code>Sprite</code> to support rendering text.
  * Can tint, fade, rotate and scale just like a sprite.
@@ -33,6 +36,8 @@ protected:
     bluegin::hgeFont* _font;
     
 public:
+    static TextPtr create(float X, float Y, int Width, std::string Text=std::string());
+
     /**
      * Creates a new <code>Text</code> object at the specified position.
      * 
@@ -118,7 +123,5 @@ public:
 
      bluegin::TextRenderData& getTextRenderData();
 };
-
-typedef shared_ptr<Text> TextPtr;
 
 }
