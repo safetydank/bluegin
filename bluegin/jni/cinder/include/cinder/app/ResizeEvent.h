@@ -24,7 +24,6 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/Vector.h"
-#include "cinder/app/Event.h"
 
 namespace cinder { namespace app {
 
@@ -37,6 +36,7 @@ class ResizeEvent : public Event {
 	Vec2i		getSize() const { return mSize; }
 	int32_t		getWidth() const { return mSize.x; }
 	int32_t		getHeight() const { return mSize.y; }
+	float		getAspectRatio() const { return mSize.x / (float)mSize.y; }
 	
   private:
 	Vec2i		mSize;

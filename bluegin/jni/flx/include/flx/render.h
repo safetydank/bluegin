@@ -2,7 +2,6 @@
 
 #include "bluegin/bluegin.h"
 #include "cinder/gl/Texture.h"
-#include "cinder/gl/Vbo.h"
 #include "cinder/Color.h"
 #include "cinder/Matrix.h"
 
@@ -15,8 +14,11 @@ class Text;
 
 struct BatchState
 {
+    /** The texture to bind */
     ci::gl::Texture texture;
-    bool            preblend;
+    /** Enables alpha blending */
+    bool            alphaBlend;
+
     BatchState();
     BatchState(ci::gl::Texture& t, bool pb);
 };
@@ -48,10 +50,7 @@ protected:
 
     ci::gl::Texture  mActiveTexture;
 
-    ci::gl::VboMesh  mVboMesh;
-
     vector<ci::Vec3f>  mPositions;
-    vector<index_t>    mIndices;
     vector<ci::Vec2f>  mTexCoords;
     vector<ci::ColorA> mColors;
 

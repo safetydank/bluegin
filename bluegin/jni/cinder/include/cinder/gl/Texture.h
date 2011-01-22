@@ -37,18 +37,8 @@
 
 namespace cinder { namespace gl {
 
-/** \brief Reference-counted OpenGL texture
-
-	Texture represents an OpenGL texture object. It maintains an internal reference-counted pointer which supports copying and assignment and properly frees the associated OpenGL resources.
-	\n \em Example Usage:\code
-	gl::Texture myTexture = gl::Texture( loadImage( loadFile( "someFile.png" ) ) ); // creates an OpenGL texture based on a file
-	myTexture.enableAndBind();
-	... // OpenGL commands using the texture
-	myTexture.unbind();
-	gl::Texture myOtherTexture = myTexture; // this does the right thing and does not risk a double-free of the OpenGL resource
-	\endcode
-**/
-
+/** \brief Represents an OpenGL Texture. \ImplShared
+\see \ref guide_Images "Images in Cinder" */
 class Texture {
   public:
 	struct Format;
@@ -260,12 +250,12 @@ class Texture {
 		void			(*mDeallocatorFunc)(void *refcon);
 		void			*mDeallocatorRefcon;			
 	};
-	shared_ptr<Obj>		mObj;
+	std::shared_ptr<Obj>		mObj;
 
   public:
 	//@{
 	//! Emulates shared_ptr-like behavior
-	typedef shared_ptr<Obj> Texture::*unspecified_bool_type;
+	typedef std::shared_ptr<Obj> Texture::*unspecified_bool_type;
 	operator unspecified_bool_type() const { return ( mObj.get() == 0 ) ? 0 : &Texture::mObj; }
 	void reset() { mObj.reset(); }
 	//@}  
@@ -294,12 +284,12 @@ class TextureCache {
 		static void TextureCacheDeallocator( void *aDeallocatorRefcon );
 	};
  
-	shared_ptr<Obj>		mObj;
+	std::shared_ptr<Obj>		mObj;
 
   public:
  	//@{
 	//! Emulates shared_ptr-like behavior
-	typedef shared_ptr<Obj> TextureCache::*unspecified_bool_type;
+	typedef std::shared_ptr<Obj> TextureCache::*unspecified_bool_type;
 	operator unspecified_bool_type() const { return ( mObj.get() == 0 ) ? 0 : &TextureCache::mObj; }
 	void reset() { mObj.reset(); }
 	//@}	

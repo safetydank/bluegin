@@ -1,5 +1,8 @@
 /*
- Copyright (c) 2010, The Barbarian Group
+ Copyright (c) 2010, The Cinder Project, All rights reserved.
+ This code is intended for use with the Cinder C++ library: http://libcinder.org
+
+ Portions Copyright (c) 2010, The Barbarian Group
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -34,6 +37,10 @@
 #include "cinder/Text.h"
 #endif
 #include "cinder/PolyLine.h"
+#ifndef CINDER_BLUEGIN
+#include "cinder/Path2d.h"
+#include "cinder/Shape2d.h"
+#endif
 #include <cmath>
 #include <map>
 
@@ -555,6 +562,27 @@ void drawColorCube( const Vec3f &center, const Vec3f &size )
 	drawCubeImpl( center, size, true );
 }
 
+void drawStrokedCube( const Vec3f &center, const Vec3f &size )
+{
+	Vec3f min = center - size * 0.5f;
+	Vec3f max = center + size * 0.5f;
+
+	gl::drawLine( Vec3f(min.x, min.y, min.z), Vec3f(max.x, min.y, min.z) );
+	gl::drawLine( Vec3f(max.x, min.y, min.z), Vec3f(max.x, max.y, min.z) );
+	gl::drawLine( Vec3f(max.x, max.y, min.z), Vec3f(min.x, max.y, min.z) );
+	gl::drawLine( Vec3f(min.x, max.y, min.z), Vec3f(min.x, min.y, min.z) );
+	
+	gl::drawLine( Vec3f(min.x, min.y, max.z), Vec3f(max.x, min.y, max.z) );
+	gl::drawLine( Vec3f(max.x, min.y, max.z), Vec3f(max.x, max.y, max.z) );
+	gl::drawLine( Vec3f(max.x, max.y, max.z), Vec3f(min.x, max.y, max.z) );
+	gl::drawLine( Vec3f(min.x, max.y, max.z), Vec3f(min.x, min.y, max.z) );
+	
+	gl::drawLine( Vec3f(min.x, min.y, min.z), Vec3f(min.x, min.y, max.z) );
+	gl::drawLine( Vec3f(min.x, max.y, min.z), Vec3f(min.x, max.y, max.z) );
+	gl::drawLine( Vec3f(max.x, max.y, min.z), Vec3f(max.x, max.y, max.z) );
+	gl::drawLine( Vec3f(max.x, min.y, min.z), Vec3f(max.x, min.y, max.z) );
+}
+
 // http://local.wasp.uwa.edu.au/~pbourke/texture_colour/spheremap/  Paul Bourke's sphere code
 // We should weigh an alternative that reduces the batch count by using GL_TRIANGLES instead
 void drawSphere( const Vec3f &center, float radius, int segments )
@@ -855,7 +883,44 @@ void draw( const PolyLine<Vec2f> &polyLine )
 	glDisableClientState( GL_VERTEX_ARRAY );
 }
 
+#ifndef CINDER_BLUEGIN
+void draw( const Path2d &path2d, float approximationScale )
+{
+	if( path2d.getNumSegments() == 0 )
+		return;
+	std::vector<Vec2f> points = path2d.subdivide( approximationScale );
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glVertexPointer( 2, GL_FLOAT, 0, &(points[0]) );
+	glDrawArrays( GL_LINE_STRIP, 0, points.size() );
+	glDisableClientState( GL_VERTEX_ARRAY );	
+}
+
+void draw( const Shape2d &shape2d, float approximationScale )
+{
+	glEnableClientState( GL_VERTEX_ARRAY );
+	for( std::vector<Path2d>::const_iterator contourIt = shape2d.getContours().begin(); contourIt != shape2d.getContours().end(); ++contourIt ) {
+		if( contourIt->getNumSegments() == 0 )
+			continue;
+		std::vector<Vec2f> points = contourIt->subdivide( approximationScale );
+		glVertexPointer( 2, GL_FLOAT, 0, &(points[0]) );
+		glDrawArrays( GL_LINE_STRIP, 0, points.size() );
+	}
+	glDisableClientState( GL_VERTEX_ARRAY );	
+}
+#endif
+
 #if ! defined( CINDER_GLES )
+void drawSolid( const Path2d &path2d, float approximationScale )
+{
+	if( path2d.getNumSegments() == 0 )
+		return;
+	std::vector<Vec2f> points = path2d.subdivide( approximationScale );
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glVertexPointer( 2, GL_FLOAT, 0, &(points[0]) );
+	glDrawArrays( GL_POLYGON, 0, points.size() );
+	glDisableClientState( GL_VERTEX_ARRAY );	
+}
+
 void draw( const TriMesh &mesh )
 {
 	glVertexPointer( 3, GL_FLOAT, 0, &(mesh.getVertices()[0]) );
@@ -867,6 +932,17 @@ void draw( const TriMesh &mesh )
 	}
 	else
 		glDisableClientState( GL_NORMAL_ARRAY );
+	
+	if( mesh.hasColorsRGB() ) {
+		glColorPointer( 3, GL_FLOAT, 0, &(mesh.getColorsRGB()[0]) );
+		glEnableClientState( GL_COLOR_ARRAY );
+	}
+	else if( mesh.hasColorsRGBA() ) {
+		glColorPointer( 4, GL_FLOAT, 0, &(mesh.getColorsRGBA()[0]) );
+		glEnableClientState( GL_COLOR_ARRAY );
+	}
+	else 
+		glDisableClientState( GL_COLOR_ARRAY );	
 
 	if( mesh.hasTexCoords() ) {
 		glTexCoordPointer( 2, GL_FLOAT, 0, &(mesh.getTexCoords()[0]) );
@@ -878,6 +954,7 @@ void draw( const TriMesh &mesh )
 
 	glDisableClientState( GL_VERTEX_ARRAY );
 	glDisableClientState( GL_NORMAL_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 }
 
@@ -893,6 +970,17 @@ void drawRange( const TriMesh &mesh, size_t startTriangle, size_t triangleCount 
 	else
 		glDisableClientState( GL_NORMAL_ARRAY );
 
+	if( mesh.hasColorsRGB() ) {
+		glColorPointer( 3, GL_FLOAT, 0, &(mesh.getColorsRGB()[0]) );
+		glEnableClientState( GL_COLOR_ARRAY );
+	}
+	else if( mesh.hasColorsRGBA() ) {
+		glColorPointer( 4, GL_FLOAT, 0, &(mesh.getColorsRGBA()[0]) );
+		glEnableClientState( GL_COLOR_ARRAY );
+	}	
+	else 
+		glDisableClientState( GL_COLOR_ARRAY );
+	
 	if( mesh.hasTexCoords() ) {
 		glTexCoordPointer( 2, GL_FLOAT, 0, &(mesh.getTexCoords()[0]) );
 		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
@@ -900,13 +988,13 @@ void drawRange( const TriMesh &mesh, size_t startTriangle, size_t triangleCount 
 	else
 		glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 		
-	glDrawRangeElements( GL_TRIANGLES, 0, mesh.getNumVertices(), triangleCount * 3, GL_UNSIGNED_SHORT, &(mesh.getIndices()[startTriangle*3]) );
+	glDrawRangeElements( GL_TRIANGLES, 0, mesh.getNumVertices(), triangleCount * 3, GL_UNSIGNED_INT, &(mesh.getIndices()[startTriangle*3]) );
 
 	glDisableClientState( GL_VERTEX_ARRAY );
 	glDisableClientState( GL_NORMAL_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
 	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
 }
-#endif // ! defined( CINDER_GLES )
 
 void draw( const VboMesh &vbo )
 {
@@ -948,6 +1036,8 @@ void drawArrays( const VboMesh &vbo, GLint first, GLsizei count )
 	gl::VboMesh::unbindBuffers();
 	vbo.disableClientStates();
 }
+
+#endif // ! defined( CINDER_GLES )
 
 
 void drawBillboard( const Vec3f &pos, const Vec2f &scale, float rotationDegrees, const Vec3f &bbRight, const Vec3f &bbUp )
@@ -991,7 +1081,9 @@ void draw( const Texture &texture, const Rectf &rect )
 void draw( const Texture &texture, const Area &srcArea, const Rectf &destRect )
 {
 	SaveTextureBindState saveBindState( texture.getTarget() );
-	SaveTextureEnabledState saveEnabledState( texture.getTarget() );
+	BoolState saveEnabledState( texture.getTarget() );
+	ClientBoolState vertexArrayState( GL_VERTEX_ARRAY );
+	ClientBoolState texCoordArrayState( GL_TEXTURE_COORD_ARRAY );	
 	texture.enableAndBind();
 
 	glEnableClientState( GL_VERTEX_ARRAY );
@@ -1013,9 +1105,6 @@ void draw( const Texture &texture, const Area &srcArea, const Rectf &destRect )
 	texCoords[3*2+0] = srcCoords.getX1(); texCoords[3*2+1] = srcCoords.getY2();	
 
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-
-	glDisableClientState( GL_VERTEX_ARRAY );
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY );	
 }
 
 #ifndef CINDER_BLUEGIN
@@ -1023,8 +1112,6 @@ namespace {
 void drawStringHelper( const std::string &str, const Vec2f &pos, const ColorA &color, Font font, int justification )
 {
 	// justification: { left = -1, center = 0, right = 1 }
-	SaveTextureBindState saveBindState( GL_TEXTURE_2D );
-	SaveTextureEnabledState saveEnabledState( GL_TEXTURE_2D );
 	SaveColorState colorState;
 
 	static Font defaultFont( "Arial", 14 );
@@ -1092,19 +1179,35 @@ SaveTextureBindState::~SaveTextureBindState()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// SaveTextureEnabledState
-SaveTextureEnabledState::SaveTextureEnabledState( GLint target )
+// BoolState
+BoolState::BoolState( GLint target )
 	: mTarget( target )
 {
 	glGetBooleanv( target, &mOldValue );
 }
 
-SaveTextureEnabledState::~SaveTextureEnabledState()
+BoolState::~BoolState()
 {
 	if( mOldValue )
 		glEnable( mTarget );
 	else
 		glDisable( mTarget );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// ClientBoolState
+ClientBoolState::ClientBoolState( GLint target )
+	: mTarget( target )
+{
+	glGetBooleanv( target, &mOldValue );
+}
+
+ClientBoolState::~ClientBoolState()
+{
+	if( mOldValue )
+		glEnableClientState( mTarget );
+	else
+		glDisableClientState( mTarget );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

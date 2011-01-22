@@ -36,6 +36,7 @@
 
 namespace cinder { namespace gl {
 
+//! Represents an OpenGL GLSL program. \ImplShared
 class GlslProg {
   public: 
 	GlslProg() {}
@@ -80,12 +81,12 @@ class GlslProg {
 		std::map<std::string,int>	mUniformLocs;
 	};
  
-	shared_ptr<Obj>	mObj;
+	std::shared_ptr<Obj>	mObj;
 
   public:
 	//@{
 	//! Emulates shared_ptr-like behavior
-	typedef shared_ptr<Obj> GlslProg::*unspecified_bool_type;
+	typedef std::shared_ptr<Obj> GlslProg::*unspecified_bool_type;
 	operator unspecified_bool_type() const { return ( mObj.get() == 0 ) ? 0 : &GlslProg::mObj; }
 	void reset() { mObj.reset(); }
 	//@}  

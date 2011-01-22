@@ -239,7 +239,7 @@ void Fbo::init()
 				glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, getTarget(), mObj->mDepthTexture.getId(), 0 );
 	#elif defined( CINDER_BLUEGIN )
         exit(1);
-    #else
+	#else
 		throw; // this should never fire in OpenGL ES
 	#endif
 			}

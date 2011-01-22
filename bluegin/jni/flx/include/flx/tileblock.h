@@ -6,6 +6,9 @@
 
 namespace flx {
 
+class Tileblock;
+typedef shared_ptr<Tileblock> TileblockPtr;
+
 /**
  * This is the basic "environment object" class, used to create simple walls and floors.
  * It can be filled with a random selection of tiles to quickly add detail.
@@ -57,8 +60,6 @@ public:
      */
     void renderBlock();
 };
-
-typedef shared_ptr<Tileblock> TileblockPtr;
 
 }
 

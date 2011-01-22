@@ -43,6 +43,7 @@
 #include "cinder/Font.h"
 #endif
 #include "cinder/PolyLine.h"
+#include "cinder/AxisAlignedBox.h"
 
 #if defined( CINDER_MSW )
 	#include <windows.h>
@@ -145,6 +146,10 @@ inline void color( const Color &c ) { glColor4f( c.r, c.g, c.b, 1.0f ); }
 //! Sets the current color and alpha value
 inline void color( const ColorA &c ) { glColor4f( c.r, c.g, c.b, c.a ); }
 
+//! Enables the OpenGL State \a state. Equivalent to calling to glEnable( state );
+inline void enable( GLenum state ) { glEnable( state ); }
+//! Disables the OpenGL State \a state. Equivalent to calling to glDisable( state );
+inline void disable( GLenum state ) { glDisable( state ); }
 
 //! Enables alpha blending. Selects a \c BlendFunc that is appropriate for premultiplied-alpha when \a premultiplied
 void enableAlphaBlending( bool premultiplied = false );
@@ -183,6 +188,10 @@ void drawLine( const Vec3f &start, const Vec3f &end );
 void drawCube( const Vec3f &center, const Vec3f &size );
 //! Renders a solid cube centered at \a center of size \a size. Each face is assigned a unique color, and no normals or texture coordinates are generated.
 void drawColorCube( const Vec3f &center, const Vec3f &size );
+//! Renders a stroked cube centered at \a center of size \a size.
+void drawStrokedCube( const Vec3f &center, const Vec3f &size );
+//! Renders a stroked cube \a aab
+inline void drawStrokedCube( const AxisAlignedBox3f &aab ) { drawStrokedCube( aab.getCenter(), aab.getSize() ); }
 //! Renders a solid sphere centered at \a center of radius \a radius. \a segments defines how many segments the sphere is subdivided into. Normals and texture coordinates in the range [0,1] are generated.
 void drawSphere( const Vec3f &center, float radius, int segments = 12 );
 //! Renders a solid sphere. \a segments defines how many segments the sphere is subdivided into. Normals and texture coordinates in the range [0,1] are generated.
@@ -203,8 +212,15 @@ void drawFrustum( const Camera &cam );
 void drawTorus( float outterRadius, float innerRadius, int longitudeSegments = 12, int latitudeSegments = 12 );
 //! Draws a PolyLine \a polyLine
 void draw( const class PolyLine<Vec2f> &polyLine );
+//! Draws a Path2d \a path2d using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc
+void draw( const class Path2d &path2d, float approximationScale = 1.0f );
+//! Draws a Shape2d \a shape2d using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc
+void draw( const class Shape2d &shape2d, float approximationScale = 1.0f );
 
 #if ! defined( CINDER_GLES )
+//! Draws a solid (filled) Path2d \a path2d using approximation scale \a approximationScale. 1.0 corresponds to screenspace, 2.0 is double screen resolution, etc
+void drawSolid( const class Path2d &path2d, float approximationScale = 1.0f );
+
 //! Draws a cinder::TriMesh \a mesh at the origin.
 void draw( const TriMesh &mesh );
 //! Draws a range of triangles starting with triangle # \a startTriangle and a count of \a triangleCount from cinder::TriMesh \a mesh at the origin.
@@ -248,10 +264,19 @@ struct SaveTextureBindState {
 	GLint	mOldID;
 };
 
-//! Convenience class designed to push and pop the enabled/disabled state of a given texture unit
-struct SaveTextureEnabledState {
-	SaveTextureEnabledState( GLint target );
-	~SaveTextureEnabledState();
+//! Convenience class designed to push and pop a boolean OpenGL state
+struct BoolState {
+	BoolState( GLint target );
+	~BoolState();
+  private:
+	GLint		mTarget;
+	GLboolean	mOldValue;
+};
+
+//! Convenience class designed to push and pop a boolean OpenGL state
+struct ClientBoolState {
+	ClientBoolState( GLint target );
+	~ClientBoolState();
   private:
 	GLint		mTarget;
 	GLboolean	mOldValue;

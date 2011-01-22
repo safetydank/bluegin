@@ -1,5 +1,10 @@
 /*
- Copyright (c) 2010, The Barbarian Group
+ Copyright (c) 2010, The Cinder Project
+ All rights reserved.
+ 
+ This code is designed for use with the Cinder C++ library, http://libcinder.org 
+
+ Portions Copyright (c) 2010, The Barbarian Group
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -32,6 +37,22 @@
 
 namespace cinder {
 
+//!  \cond
+template<typename T>
+struct VECTRAIT {
+	typedef float DIST;
+};
+
+template<>
+struct VECTRAIT<double> {
+	typedef double DIST;
+};
+
+template<>
+struct VECTRAIT<int32_t> {
+	typedef float DIST;
+};
+
 template<typename T, typename Y>
 struct VEC3CONV {
 	static T	getX( const Y &v ) { return static_cast<T>( v.x ); }
@@ -39,13 +60,18 @@ struct VEC3CONV {
 	static T	getZ( const Y &v ) { return static_cast<T>( v.z ); }
 };
 
+//! \endcond
+
+template<typename T> class Vec3;
+
 template<typename T>
 class Vec2
 {
  public:
 	T x,y;
 
-	typedef T TYPE;
+	typedef T							TYPE;
+	typedef typename VECTRAIT<T>::DIST	DIST;
 	static const int DIM = 2;
 
 	Vec2() {}
@@ -127,7 +153,13 @@ class Vec2
 		return x * rhs.x + y * rhs.y;
 	}
 
-	T distance( const Vec2<T> &rhs ) const
+	//! Returns the z component of the cross if the two operands were Vec3's on the XY plane, the equivalent of Vec3(*this).cross( Vec3(rhs) ).z
+	T cross( const Vec2<T> &rhs ) const
+	{
+		return x * rhs.y - y * rhs.x;
+	}
+
+	DIST distance( const Vec2<T> &rhs ) const
 	{
 		return ( *this - rhs ).length();
 	}
@@ -137,21 +169,21 @@ class Vec2
 		return ( *this - rhs ).lengthSquared();
 	}
 
-	T length() const
+	DIST length() const
 	{
-		return math<T>::sqrt( x*x + y*y );
+		return math<DIST>::sqrt( x*x + y*y );
 	}
 
 	void normalize()
 	{
-		T invS = ((T)1) / length();
+		DIST invS = 1 / length();
 		x *= invS;
 		y *= invS;
 	}
 
 	Vec2<T> normalized() const
 	{
-		T invS = ((T)1) / length();
+		DIST invS = 1 / length();
 		return Vec2<T>( x * invS, y * invS );
 	}
 
@@ -160,27 +192,27 @@ class Vec2
 	{
 		T s = lengthSquared();
 		if( s > 0 ) {
-			T invL = ((T)1) / math<T>::sqrt( s );
+			DIST invL = 1 / math<DIST>::sqrt( s );
 			x *= invL;
 			y *= invL;
 		}
 	}
 
-	Vec2<T> safeNormalized()
+	Vec2<T> safeNormalized() const
 	{
 		T s = lengthSquared();
 		if( s > 0 ) {
-			T invL = ((T)1) / math<T>::sqrt( s );
+			DIST invL = 1 / math<DIST>::sqrt( s );
 			return Vec2<T>( x * invL, y * invL );
 		}
 		else
 			return Vec2<T>::zero();
 	}
 
-	void rotate(T angle)
+	void rotate( DIST radians )
 	{
-		T cosa = math<T>::cos( angle );
-		T sina = math<T>::sin( angle );
+		T cosa = math<T>::cos( radians );
+		T sina = math<T>::sin( radians );
 		T rx = x * cosa - y * sina;
 		y = x * sina + y * cosa;
 		x = rx;
@@ -192,12 +224,12 @@ class Vec2
 	}
 
 	//! Limits the length of a Vec2 to \a maxLength, scaling it proportionally if necessary.
-	void limit( T maxLength )
+	void limit( DIST maxLength )
 	{
 		T lengthSquared = x * x + y * y;
 
 		if( ( lengthSquared > maxLength * maxLength ) && ( lengthSquared > 0 ) ) {
-			T ratio = maxLength / math<T>::sqrt( lengthSquared );
+			DIST ratio = maxLength / math<DIST>::sqrt( lengthSquared );
 			x *= ratio;
 			y *= ratio;
 		}
@@ -209,7 +241,7 @@ class Vec2
 		T lengthSquared = x * x + y * y;
 
 		if( ( lengthSquared > maxLength * maxLength ) && ( lengthSquared > 0 ) ) {
-			T ratio = maxLength / math<T>::sqrt( lengthSquared );
+			DIST ratio = maxLength / math<DIST>::sqrt( lengthSquared );
 			return Vec2<T>( x * ratio, y * ratio );
 		}
 		else
@@ -232,6 +264,26 @@ class Vec2
 		return (*this) + ( r - (*this) ) * fact;
 	}
 
+	void lerpEq( T fact, const Vec2<T> &rhs )
+	{
+		x = x + ( rhs.x - x ) * fact; y = y + ( rhs.y - y ) * fact;
+	}
+
+	// GLSL inspired swizzling functions.
+	Vec2<T> xx() const { return Vec2<T>(x, x); }
+	Vec2<T> xy() const { return Vec2<T>(x, y); }
+	Vec2<T> yx() const { return Vec2<T>(y, x); }
+	Vec2<T> yy() const { return Vec2<T>(y, y); }
+
+	Vec3<T> xxx() const { return Vec3<T>(x, x, x); }
+	Vec3<T> xxy() const { return Vec3<T>(x, x, y); }
+	Vec3<T> xyx() const { return Vec3<T>(x, y, x); }
+	Vec3<T> xyy() const { return Vec3<T>(x, y, y); }
+	Vec3<T> yxx() const { return Vec3<T>(y, x, x); }
+	Vec3<T> yxy() const { return Vec3<T>(y, x, y); }
+	Vec3<T> yyx() const { return Vec3<T>(y, y, x); }
+	Vec3<T> yyy() const { return Vec3<T>(y, y, y); }
+
 	static Vec2<T> max()
 	{
 		return Vec2<T>( std::numeric_limits<T>::max(), std::numeric_limits<T>::max() );
@@ -239,12 +291,12 @@ class Vec2
 
 	static Vec2<T> zero()
 	{
-		return Vec2<T>( static_cast<T>( 0 ), static_cast<T>( 0 ) );
+		return Vec2<T>( 0, 0 );
 	}
 
 	static Vec2<T> one()
 	{
-		return Vec2<T>( static_cast<T>( 1 ), static_cast<T>( 1 ) );
+		return Vec2<T>( 1, 1 );
 	}
 
 	operator T*(){ return (T*) this; }
@@ -266,7 +318,7 @@ class Vec3
 public:
 	T x,y,z;
 
-	typedef T TYPE;
+	typedef T								TYPE;
 	static const int DIM = 3;
 
 	Vec3() {}
@@ -277,7 +329,10 @@ public:
 		: x( src.x ), y( src.y ), z( src.z )
 	{}
 	Vec3( const Vec2<T> &v2, T aZ )
-		: x( v2.x ), y ( v2.y ), z( aZ )
+		: x( v2.x ), y( v2.y ), z( aZ )
+	{}
+	explicit Vec3( const Vec2<T> &v2 )
+		: x( v2.x ), y( v2.y ), z( 0 )
 	{}
 	explicit Vec3( const T *d ) : x( d[0] ), y( d[1] ), z( d[2] ) {}
 	template<typename FromT>
@@ -447,7 +502,7 @@ public:
 		}
 	}
 
-	Vec3<T> safeNormalized()
+	Vec3<T> safeNormalized() const
 	{
 		T s = lengthSquared();
 		if( s > 0 ) {
@@ -568,12 +623,51 @@ public:
 	}
 
 	// derived from but not equivalent to Quaternion::squad
-	Vec3<T> squad( T t, const Vec3<T> &tangentA, const Vec3<T> &tangentB, const Vec3<T> &end )
+	Vec3<T> squad( T t, const Vec3<T> &tangentA, const Vec3<T> &tangentB, const Vec3<T> &end ) const
 	{
 		Vec3<T> r1 = this->slerp( t, end );
 		Vec3<T> r2 = tangentA.slerp( t, tangentB );
 		return r1.slerp( 2 * t * (1-t), r2 );
 	}
+
+	// GLSL inspired swizzling functions.
+	Vec2<T> xx() const { return Vec2<T>(x, x); }
+	Vec2<T> xy() const { return Vec2<T>(x, y); }
+	Vec2<T> xz() const { return Vec2<T>(x, z); }
+	Vec2<T> yx() const { return Vec2<T>(y, x); }
+	Vec2<T> yy() const { return Vec2<T>(y, y); }
+	Vec2<T> yz() const { return Vec2<T>(y, z); }
+	Vec2<T> zx() const { return Vec2<T>(z, x); }
+	Vec2<T> zy() const { return Vec2<T>(z, y); }
+	Vec2<T> zz() const { return Vec2<T>(z, z); }
+
+	Vec3<T> xxx() const { return Vec3<T>(x, x, x); }
+	Vec3<T> xxy() const { return Vec3<T>(x, x, y); }
+	Vec3<T> xxz() const { return Vec3<T>(x, x, z); }
+	Vec3<T> xyx() const { return Vec3<T>(x, y, x); }
+	Vec3<T> xyy() const { return Vec3<T>(x, y, y); }
+	Vec3<T> xyz() const { return Vec3<T>(x, y, z); }
+	Vec3<T> xzx() const { return Vec3<T>(x, z, x); }
+	Vec3<T> xzy() const { return Vec3<T>(x, z, y); }
+	Vec3<T> xzz() const { return Vec3<T>(x, z, z); }
+	Vec3<T> yxx() const { return Vec3<T>(y, x, x); }
+	Vec3<T> yxy() const { return Vec3<T>(y, x, y); }
+	Vec3<T> yxz() const { return Vec3<T>(y, x, z); }
+	Vec3<T> yyx() const { return Vec3<T>(y, y, x); }
+	Vec3<T> yyy() const { return Vec3<T>(y, y, y); }
+	Vec3<T> yyz() const { return Vec3<T>(y, y, z); }
+	Vec3<T> yzx() const { return Vec3<T>(y, z, x); }
+	Vec3<T> yzy() const { return Vec3<T>(y, z, y); }
+	Vec3<T> yzz() const { return Vec3<T>(y, z, z); }
+	Vec3<T> zxx() const { return Vec3<T>(z, x, x); }
+	Vec3<T> zxy() const { return Vec3<T>(z, x, y); }
+	Vec3<T> zxz() const { return Vec3<T>(z, x, z); }
+	Vec3<T> zyx() const { return Vec3<T>(z, y, x); }
+	Vec3<T> zyy() const { return Vec3<T>(z, y, y); }
+	Vec3<T> zyz() const { return Vec3<T>(z, y, z); }
+	Vec3<T> zzx() const { return Vec3<T>(z, z, x); }
+	Vec3<T> zzy() const { return Vec3<T>(z, z, y); }
+	Vec3<T> zzz() const { return Vec3<T>(z, z, z); }
 
 	operator T*(){ return (T*) this; }
 	operator const T*() const { return (const T*) this; }
@@ -590,7 +684,8 @@ public:
 };
 
 template <class T>
-class Vec4{
+class Vec4
+{
  public:
 	T x,y,z,w;
 
@@ -732,10 +827,14 @@ class Vec4{
 		return Vec3<T>( -x, -y, -z, -w );
 	}
 
-
 	Vec4<T> lerp( T fact, const Vec4<T>& r ) const
 	{
 		return (*this) + ( r - (*this) ) * fact;
+	}
+
+	void lerpEq( T fact, const Vec4<T> &rhs )
+	{
+		x = x + ( rhs.x - x ) * fact; y = y + ( rhs.y - y ) * fact; z = z + ( rhs.z - z ) * fact; w = w + ( rhs.w - w ) * fact;
 	}
 
 	static Vec4<T> max()

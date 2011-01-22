@@ -27,7 +27,6 @@
 #include <cinder/Cinder_BlueGin.h>
 #else
 #include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
 #endif
 
 namespace cinder {
@@ -71,6 +70,36 @@ using boost::checked_array_deleter;
 #define CINDER_LITTLE_ENDIAN
 
 } // namespace cinder
+
+
+#if defined( _MSC_VER ) && ( _MSC_VER >= 1600 )
+	#include <memory>
+#elif defined( CINDER_COCOA )
+	#include <tr1/memory>
+	namespace std {
+		using std::tr1::shared_ptr;
+		using std::tr1::static_pointer_cast;
+		using std::tr1::dynamic_pointer_cast;
+		using std::tr1::const_pointer_cast;
+	}
+#elif defined( CINDER_BLUEGIN )
+	namespace std {
+        using boost::shared_ptr;
+    }
+#else
+	#include <boost/shared_ptr.hpp>
+	namespace std {
+		using boost::shared_ptr; // future-proof shared_ptr by putting it into std::
+		using boost::static_pointer_cast;
+		using boost::dynamic_pointer_cast;
+		using boost::const_pointer_cast;
+	}
+#endif
+
+#ifndef CINDER_BLUEGIN
+#include <boost/shared_ptr.hpp> // necessary for checked_array_deleter
+using boost::checked_array_deleter;
+#endif
 
 // Create a namepace alias as shorthand for cinder::
 #if ! defined( CINDER_NO_NS_ALIAS )

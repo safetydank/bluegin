@@ -23,8 +23,7 @@
 #include "cinder/gl/Vbo.h"
 #include <sstream>
 
-using std::vector;
-using std::pair;
+using namespace std;
 
 #ifdef CINDER_BLUEGIN
 #define GL_STREAM_DRAW GL_DYNAMIC_DRAW
@@ -48,7 +47,6 @@ Vbo::Obj::Obj( GLenum aTarget )
 
 Vbo::Obj::~Obj()
 {
-    Log("XXX Cleaning up VertexBuffer %d", mId);
 	glDeleteBuffers( 1, &mId );
 }
 
@@ -59,7 +57,6 @@ Vbo::Vbo( GLenum aTarget )
 
 void Vbo::bind()
 {
-    // Log("binding VBO target %x id %d", mObj->mTarget, mObj->mId);
 	glBindBuffer( mObj->mTarget, mObj->mId );
 }
 
@@ -83,20 +80,12 @@ void Vbo::bufferSubData( ptrdiff_t offset, size_t size, const void *data )
 uint8_t* Vbo::map( GLenum access )
 {
 	bind();
-    uint8_t* buffer = reinterpret_cast<uint8_t*>( glMapBuffer( mObj->mTarget, access ) );
-    // if (buffer == NULL) {
-    //     Log("Error mapping buffer target %x with access %x", mObj->mTarget, access);
-    // }
-    // else {
-    //     Log("Mapped buffer with access %x", access);
-    // }
-    return buffer;
+	return reinterpret_cast<uint8_t*>( glMapBuffer( mObj->mTarget, access ) );
 }
 
 void Vbo::unmap()
 {
 	bind();
-    // Log("Trying to unmap target %x id %d", mObj->mTarget, mObj->mId);
 	GLboolean result = glUnmapBuffer( mObj->mTarget );
 	if( result != GL_TRUE )
 #ifdef CINDER_BLUEGIN
@@ -136,6 +125,10 @@ VboMesh::VboMesh( const TriMesh &triMesh, Layout layout )
 	if( layout.isDefaults() ) { // we need to start by preparing our layout
 		if( triMesh.hasNormals() )
 			mObj->mLayout.setStaticNormals();
+		if( triMesh.hasColorsRGB() )
+			mObj->mLayout.setStaticColorsRGB();
+		if( triMesh.hasColorsRGBA() )
+			mObj->mLayout.setStaticColorsRGBA();
 		if( triMesh.hasTexCoords() )
 			mObj->mLayout.setStaticTexCoords2d();
 		mObj->mLayout.setStaticIndices();
@@ -160,6 +153,8 @@ VboMesh::VboMesh( const TriMesh &triMesh, Layout layout )
 		
 		bool copyPosition = ( buffer == STATIC_BUFFER ) ? mObj->mLayout.hasStaticPositions() : mObj->mLayout.hasDynamicPositions();
 		bool copyNormal = ( ( buffer == STATIC_BUFFER ) ? mObj->mLayout.hasStaticNormals() : mObj->mLayout.hasDynamicNormals() ) && triMesh.hasNormals();
+		bool copyColorRGB = ( ( buffer == STATIC_BUFFER ) ? mObj->mLayout.hasStaticColorsRGB() : mObj->mLayout.hasDynamicColorsRGB() ) && triMesh.hasColorsRGB();
+		bool copyColorRGBA = ( ( buffer == STATIC_BUFFER ) ? mObj->mLayout.hasStaticColorsRGBA() : mObj->mLayout.hasDynamicColorsRGBA() ) && triMesh.hasColorsRGBA();
 		bool copyTexCoord2D = ( ( buffer == STATIC_BUFFER ) ? mObj->mLayout.hasStaticTexCoords2d() : mObj->mLayout.hasDynamicTexCoords2d() ) && triMesh.hasTexCoords();
 		
 		for( size_t v = 0; v < mObj->mNumVertices; ++v ) {
@@ -170,6 +165,14 @@ VboMesh::VboMesh( const TriMesh &triMesh, Layout layout )
 			if( copyNormal ) {
 				*(reinterpret_cast<Vec3f*>(ptr)) = triMesh.getNormals()[v];
 				ptr += sizeof( Vec3f );
+			}
+			if( copyColorRGB ) {
+				*(reinterpret_cast<Color*>(ptr)) = triMesh.getColorsRGB()[v];
+				ptr += sizeof( Color );
+			}
+			if( copyColorRGBA ) {
+				*(reinterpret_cast<ColorA*>(ptr)) = triMesh.getColorsRGBA()[v];
+				ptr += sizeof( Color );
 			}
 			if( copyTexCoord2D ) {
 				*(reinterpret_cast<Vec2f*>(ptr)) = triMesh.getTexCoords()[v];
@@ -546,9 +549,8 @@ void VboMesh::bufferPositions( const std::vector<Vec3f> &positions )
 void VboMesh::bufferPositions( const Vec3f *positions, size_t count )
 {
 	if( mObj->mLayout.hasDynamicPositions() ) {
-		if( mObj->mDynamicStride == 0 ) {
-            getDynamicVbo().bufferSubData( mObj->mPositionOffset, sizeof(Vec3f) * count, positions );
-        }
+		if( mObj->mDynamicStride == 0 )
+			getDynamicVbo().bufferSubData( mObj->mPositionOffset, sizeof(Vec3f) * count, positions );
 		else {
             Log("FATAL ERROR: Non-zero mDynamicStride");
 			throw;
@@ -556,7 +558,7 @@ void VboMesh::bufferPositions( const Vec3f *positions, size_t count )
 	}
 	else if( mObj->mLayout.hasStaticPositions() ) {
 		if( mObj->mStaticStride == 0 ) { // planar data
-		    getStaticVbo().bufferSubData( mObj->mPositionOffset, sizeof(Vec3f) * count, positions );
+			getStaticVbo().bufferSubData( mObj->mPositionOffset, sizeof(Vec3f) * count, positions );
 		}
 		else {
             Log("FATAL ERROR: Non-zero mStaticStride");
@@ -649,19 +651,17 @@ VboMesh::VertexIter::VertexIter( const VboMesh &mesh )
 VboMesh::VertexIter::Obj::Obj( const VboMesh &mesh )
 	: mVbo( mesh.getDynamicVbo() )
 { 	
-    // Log("VertexIter::Obj: buffering empty bytes %d", mesh.mObj->mDynamicStride * mesh.mObj->mNumVertices);
 	// Buffer NULL data to tell the driver we don't care about what's in there (See NVIDIA's "Using Vertex Buffer Objects" whitepaper)
 	mVbo.bind();
-	// mVbo.bufferData( mesh.mObj->mDynamicStride * mesh.mObj->mNumVertices, NULL, GL_STREAM_DRAW );
+	//mVbo.bufferData( mesh.mObj->mDynamicStride * mesh.mObj->mNumVertices, NULL, GL_STREAM_DRAW );
 	glBufferDataARB( GL_ARRAY_BUFFER, mesh.mObj->mDynamicStride * mesh.mObj->mNumVertices, NULL, GL_STREAM_DRAW );
-	// mData = mVbo.map( GL_WRITE_ONLY );
+	//mData = mVbo.map( GL_WRITE_ONLY );
 	mData = reinterpret_cast<uint8_t*>( glMapBuffer( GL_ARRAY_BUFFER, GL_WRITE_ONLY ) );
 	mDataEnd = mData + mesh.mObj->mDynamicStride * mesh.getNumVertices();
 }
 
 VboMesh::VertexIter::Obj::~Obj()
 { 
-    // Log("~VertexIter::Obj");
 	mVbo.unmap();
 	mVbo.unbind();
 }

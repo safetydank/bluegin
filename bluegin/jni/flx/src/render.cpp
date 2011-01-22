@@ -31,15 +31,7 @@ const int TexCount    = VBO_QUADS * 6;
 
 Renderer::Renderer()
 {
-
-    gl::VboMesh::Layout layout;
-    layout.setStaticIndices();
-    layout.setStaticPositions();
-    layout.setStaticTexCoords2d();
-    mVboMesh = gl::VboMesh(VertexCount, IndexCount, layout, GL_TRIANGLES);
-
     mPositions.resize(IndexCount);
-    mIndices.resize(IndexCount);
     mTexCoords.resize(TexCount);
     mColors.resize(IndexCount);
 
@@ -121,7 +113,7 @@ void Renderer::renderQuad(ColorA color, float width, float height, Rectf& texRec
 
 void Renderer::drawBatch()
 {
-    gl::enableAlphaBlending(mBatchState.preblend);
+    gl::enableAlphaBlending(mBatchState.alphaBlend);
 
     //  skip empty batches
     if (mIndexCount == 0)
@@ -157,11 +149,11 @@ void Renderer::drawBatch()
     reset();
 }
 
-BatchState::BatchState(Texture& t, bool pb) : texture(t), preblend(pb)
+BatchState::BatchState(Texture& t, bool ab) : texture(t), alphaBlend(ab)
 {
 }
 
-BatchState::BatchState() : texture(gl::Texture()), preblend(false)
+BatchState::BatchState() : texture(gl::Texture()), alphaBlend(false)
 {
 }
 
@@ -170,9 +162,9 @@ void Renderer::setBatchState(BatchState& state)
     bool textureChanged  = (bool(state.texture) && bool(mBatchState.texture) 
             && mBatchState.texture.getId() != state.texture.getId());
     textureChanged |= (bool(state.texture) != bool(mBatchState.texture));
-    bool preblendChanged = mBatchState.preblend != state.preblend;
+    bool alphaBlendChanged = mBatchState.alphaBlend != state.alphaBlend;
 
-    if (textureChanged || preblendChanged) {
+    if (textureChanged || alphaBlendChanged) {
         //  finish batch, prepare to start new
         drawBatch();
         mBatchState = state;
