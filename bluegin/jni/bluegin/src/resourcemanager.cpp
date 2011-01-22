@@ -178,11 +178,9 @@ void ResourceManager::loadResourceConfig(const char* configPath)
                 loadTexture(rc);
                 break;
             case SOUND:
-                Log("XXX loading sound");
                 loadSound(SOUND_TYPE, rc);
                 break;
             case MUSIC:
-                Log("XXX loading music");
                 loadSound(MUSIC_TYPE, rc);
                 break;
         }

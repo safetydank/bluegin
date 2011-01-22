@@ -142,14 +142,14 @@ void FlxGlobal::unfollow()
 
 AudioPtr FlxGlobal::play(AudioSourcePtr source, float volume, bool looped)
 {
-    Log("FlxG::play soundId %d", source->soundID);
+    // Log("FlxG::play soundId %d", source->soundID);
     int soundID = source->soundID;
 
     if (soundID != -1) {
-        Log("Attempting to play sound %d", soundID);
+        // Log("Attempting to play sound %d", soundID);
         int streamID = bluegin_sound_play(soundID, volume, volume, 0, 
                 looped ? -1 : 0, 1.0f);
-        Log("Received stream ID %d", streamID);
+        // Log("Received stream ID %d", streamID);
         return AudioPtr(new Sound(source, streamID));
     }
     else {

@@ -65,7 +65,7 @@ void FlxApp::touchesMoved(TouchEvent event)
 {
 	for( vector<TouchEvent::Touch>::const_iterator touchIt = event.getTouches().begin(); 
          touchIt != event.getTouches().end(); ++touchIt ) {
-        Log("Touch moved id %d x %f y %f", touchIt->getId(), touchIt->getX(), touchIt->getY());
+        // Log("Touch moved id %d x %f y %f", touchIt->getId(), touchIt->getX(), touchIt->getY());
         Vec2f pos = FlxG.game->toViewCoords(touchIt->getPos());
         FlxG.touch.handleTouchMoved(pos.x, pos.y, FlxG.scroll.x, FlxG.scroll.y);
     }
