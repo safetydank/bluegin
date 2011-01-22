@@ -107,6 +107,9 @@ public:
      */
     void setColor(ci::ColorA color);
 
+    //  Set to true if you want colored vertices applied at render time
+    bool colored;
+
     /**
      * Not implemented
      */

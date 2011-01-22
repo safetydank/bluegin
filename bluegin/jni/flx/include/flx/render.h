@@ -18,9 +18,11 @@ struct BatchState
     ci::gl::Texture texture;
     /** Enables alpha blending */
     bool            alphaBlend;
+    /** Enable vertex coloring */
+    bool            colored;
 
     BatchState();
-    BatchState(ci::gl::Texture& t, bool pb);
+    BatchState(ci::gl::Texture& t, bool pb, bool colored=false);
 };
 
 /**
@@ -45,10 +47,7 @@ public:
                     ci::Matrix44f* xform, ci::Vec2f* offset);
 
 protected:
-
     BatchState       mBatchState;
-
-    ci::gl::Texture  mActiveTexture;
 
     vector<ci::Vec3f>  mPositions;
     vector<ci::Vec2f>  mTexCoords;
@@ -59,8 +58,6 @@ protected:
     ci::Vec3f* mFirstPosition;
 
     int mIndexCount;
-
-    bool mTextBatch;
 };
 
 typedef shared_ptr<Renderer> RendererPtr;

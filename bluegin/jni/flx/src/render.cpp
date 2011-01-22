@@ -31,15 +31,18 @@ const int TexCount    = VBO_QUADS * 6;
 
 Renderer::Renderer()
 {
+    Texture noTex;
+    mBatchState = BatchState(noTex, false, true);
+
     mPositions.resize(IndexCount);
     mTexCoords.resize(TexCount);
     mColors.resize(IndexCount);
 
-    mFirstColor = &(mColors[0]);
     mFirstPosition = &(mPositions[0]);
     mFirstTexCoord = &(mTexCoords[0]);
+    mFirstColor    = &(mColors[0]);
+
     mIndexCount = 0;
-    mTextBatch = false;
 }
 
 Renderer::~Renderer()
@@ -103,9 +106,11 @@ void Renderer::renderQuad(ColorA color, float width, float height, Rectf& texRec
     itTexCoord->x = texRect.x2;   itTexCoord->y = texRect.y2;  ++itTexCoord;
     itTexCoord->x = texRect.x1;   itTexCoord->y = texRect.y2;  ++itTexCoord;
 
-    ColorA* itColor = mFirstColor+startVertex;
-    for (int i=0; i<6; ++i, ++itColor) {
-        *itColor = color;
+    if (mBatchState.colored) {
+        ColorA* itColor = mFirstColor+startVertex;
+        for (int i=0; i<6; ++i, ++itColor) {
+            *itColor = color;
+        }
     }
 
     mIndexCount += 6;
@@ -130,15 +135,21 @@ void Renderer::drawBatch()
 
     //  Try using vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+
+    if (mBatchState.colored)
+        glEnableClientState(GL_COLOR_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, 0, &mPositions[0]);
-    glColorPointer(4, GL_FLOAT, 0, &mColors[0]);
+
+    if (mBatchState.colored)
+        glColorPointer(4, GL_FLOAT, 0, &mColors[0]);
 
     glDrawArrays(GL_TRIANGLES, 0, mIndexCount);
 
     glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+
+    if (mBatchState.colored)
+        glDisableClientState(GL_COLOR_ARRAY);
 
     if (mBatchState.texture) {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -149,7 +160,8 @@ void Renderer::drawBatch()
     reset();
 }
 
-BatchState::BatchState(Texture& t, bool ab) : texture(t), alphaBlend(ab)
+BatchState::BatchState(Texture& t, bool ab, bool colored) 
+    : texture(t), alphaBlend(ab), colored(colored)
 {
 }
 
@@ -163,8 +175,9 @@ void Renderer::setBatchState(BatchState& state)
             && mBatchState.texture.getId() != state.texture.getId());
     textureChanged |= (bool(state.texture) != bool(mBatchState.texture));
     bool alphaBlendChanged = mBatchState.alphaBlend != state.alphaBlend;
+    bool coloredChanged = mBatchState.colored != state.colored;
 
-    if (textureChanged || alphaBlendChanged) {
+    if (textureChanged || alphaBlendChanged || coloredChanged) {
         //  finish batch, prepare to start new
         drawBatch();
         mBatchState = state;

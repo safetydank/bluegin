@@ -55,7 +55,7 @@ void MenuState::create()
     _t1->setColor(FlxU::color(0x3a5c39));
     add(_t1);
 
-    _t2 = TextPtr::create(-60,FlxG.height/4,80,"de");
+    _t2 = Text::create(-60,FlxG.height/4,80,"de");
     _t2->setSize(_t1->getSize());
     _t2->setColor(_t1->getColor());
     add(_t2);

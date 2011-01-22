@@ -103,7 +103,7 @@ void Tilemap::renderTilemap()
     int c;
     int cri;
 
-    BatchState bs(graphic.getTexture(), false);
+    BatchState bs(graphic.getTexture(), false, false);
     FlxG.renderer->setBatchState(bs);
 
     for(int r = 0; r < _screenRows; r++)

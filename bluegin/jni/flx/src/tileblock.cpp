@@ -63,7 +63,7 @@ void Tileblock::renderBlock()
         frameRect = *it;
         if (frameRect.x1 != frameRect.x2 && frameRect.y1 != frameRect.y2)  {
             //  Render block at pos
-            BatchState batch(graphic.getTexture(), false);
+            BatchState batch(graphic.getTexture(), false, false);
             FlxG.renderer->setBatchState(batch);
             Rectf texRect = graphic.mapFrameRect(frameRect);
             FlxG.renderer->renderQuad(Color::white(), 

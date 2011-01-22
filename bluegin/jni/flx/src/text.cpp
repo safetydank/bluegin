@@ -209,7 +209,7 @@ void Text::render()
 
 void Text::renderText()
 {
-    BatchState batch(_font->getTexture(), false);
+    BatchState batch(_font->getTexture(), false, true);
     FlxG.renderer->setBatchState(batch);
 
     vector<Rectf>::iterator texIter = _trd.texRects.begin();

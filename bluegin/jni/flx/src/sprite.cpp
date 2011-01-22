@@ -25,7 +25,8 @@ Sprite::Sprite(float x, float y, bluegin::Graphic graphic)
     offset.set(0, 0);
     scale.set(1.0f, 1.0f);
     frameRect.set(0, 0, 0, 0);
-    mColor = ColorA(1.0f, 1.0f, 1.0f, 1.0f);
+    mColor  = ColorA(1.0f, 1.0f, 1.0f, 1.0f);
+    colored = false;
 
     antialiasing = false;
     finished = false;
@@ -50,6 +51,7 @@ void Sprite::createGraphic(float w, float h, ColorA color)
     width = frameWidth = w;
     height = frameHeight = h;
     mColor = color;
+    colored = true;
     resetHelpers();
 }
 
@@ -180,7 +182,7 @@ void Sprite::renderSprite()
     _mtx.translate(Vec3f(-origin.x, -origin.y, 0));
 
     //  draw
-    BatchState batch(graphic.getTexture(), false);
+    BatchState batch(graphic.getTexture(), false, colored);
     FlxG.renderer->setBatchState(batch);
     Rectf texRect = graphic.mapFrameRect(frameRect, (getFacing() == LEFT));
     FlxG.renderer->renderQuad(mColor, getFrameWidth(), getFrameHeight(), texRect, &_mtx, NULL);

@@ -1,6 +1,5 @@
 #include "flx/flx.h"
 #include "flx/group.h"
-#include "cinder/Rand.h"
 #include <cassert>
 
 using namespace cinder;
