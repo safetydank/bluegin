@@ -1,5 +1,26 @@
 #pragma once
 
+/**
+\mainpage BlueGin Documentation
+
+\section overview_sec Overview
+
+The BlueGin game engine is built on a loosely coupled stack of components, the
+major parts being Cinder, BlueGin and Flx.
+
+Cinder handles lifecycle, math, input and rendering duties.  BlueGin provides
+platform specific access to resources and loading facilities.  Flx is the game
+engine, based on a native port of Flixel.
+
+For game developers most of the relevant classes can be found in the flx
+namespace.
+
+Main repository - http://github.com/safetydank/bluegin
+
+Contact - dan@expandingbrain.com
+
+*/
+
 #ifdef ANDROID
 #include "bluegin/android.h"
 #include "yasper.h"

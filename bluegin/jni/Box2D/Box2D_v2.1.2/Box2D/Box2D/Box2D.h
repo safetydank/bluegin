@@ -19,6 +19,7 @@
 #ifndef BOX2D_H
 #define BOX2D_H
 
+#if 0
 /**
 \mainpage Box2D API Documentation
 
@@ -28,6 +29,7 @@ For documentation please see http://box2d.org/documentation.html
 
 For discussion please visit http://box2d.org/forum
 */
+#endif
 
 // These include files constitute the main Box2D API
 
