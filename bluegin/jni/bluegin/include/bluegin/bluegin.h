@@ -56,7 +56,7 @@ callbacks on the entities themselves.
 Support for general tilemaps, including specialized collision detection and
 autogeneration of tilemap areas.
 
-Bluegin includes an importer for Ogmo Editor tilemaps.
+BlueGin includes an importer for Ogmo Editor tilemaps.
 
 \subsection particles_ss Particles
 
