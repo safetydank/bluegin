@@ -35,5 +35,13 @@ public:
     }
 };
 
-CINDER_APP_BASIC( ModeApp, RendererGl )
+//CINDER_APP_BASIC( ModeApp, RendererGl )
 
+int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow) {	\
+	cinder::app::AppBasic::prepareLaunch();														\
+	cinder::app::AppBasic *app = new ModeApp;														\
+	cinder::app::Renderer *ren = new RendererGl;													\
+	cinder::app::AppBasic::executeLaunch( app, ren, "buh" );										\
+	cinder::app::AppBasic::cleanupLaunch();														\
+	return 0;																					\
+}

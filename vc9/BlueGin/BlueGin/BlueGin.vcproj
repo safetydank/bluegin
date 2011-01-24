@@ -190,10 +190,6 @@
 				RelativePath="..\..\..\bluegin\jni\bluegin\src\sound.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\bluegin\jni\bluegin\src\state.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -238,10 +234,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\bluegin\jni\bluegin\include\bluegin\sound.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\bluegin\jni\bluegin\include\bluegin\state.h"
 				>
 			</File>
 		</Filter>
