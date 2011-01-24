@@ -7,17 +7,13 @@
 
 namespace flx {
 
+class State;
+typedef shared_ptr<State> StatePtr;
+
 /**
  * This is the basic game "state" object - e.g. in a simple game
- * you might have a menu state and a play state.
+ * you might have menu state and a play state.
  * It acts as a kind of container for all your game objects.
- * You can also access the game's background color
- * and screen buffer through this object.
- * State is kind of a funny class from the technical side,
- * it is just a regular Flash Sprite display object,
- * with one member variable: a flixel <code>Group</code>.
- * This means you can load it up with regular Flash stuff
- * or with flixel elements, whatever works!
  */
 class State
 {
@@ -29,7 +25,7 @@ public:
      * Adds a new Object subclass (Sprite, Tileblock, etc) to the game loop.
      * State is adding this object to its built-in Group to automate updating and rendering.
      * 
-     * @param	Core	The object you want to add to the game loop.
+     * @param	core	The object you want to add to the game loop.
      */
     void add(ObjectPtr core);
 
@@ -80,7 +76,7 @@ public:
     /**
      * This static variable indicates the "clear color"
      * or default background color of the game.
-     * Change it at ANY time using <code>State.bgColor</code>.
+     * Change it at ANY time using <code>State::bgColor</code>.
      */
     static ci::Color bgColor;
 
@@ -89,8 +85,6 @@ public:
      */
     Group defaultGroup;
 };
-
-typedef shared_ptr<State> StatePtr;
 
 }
 
