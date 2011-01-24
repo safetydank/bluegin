@@ -36,7 +36,6 @@ namespace cinder {
 	
 	/*! \brief The TriMesh allows you to create a series of vertices linked into a mesh.
 	 
-	 \example
 	 
 	 
 	 To create a simple pair of Triangles linked into a quad first add the 4 vertices to the TriMesh using \a appendVertex() and then

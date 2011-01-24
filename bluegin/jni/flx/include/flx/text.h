@@ -36,8 +36,6 @@ protected:
     bluegin::hgeFont* _font;
     
 public:
-    static TextPtr create(float X, float Y, int Width, std::string Text=std::string());
-
     /**
      * Creates a new <code>Text</code> object at the specified position.
      * 
@@ -46,9 +44,12 @@ public:
      * @param	Width	The width of the text object (height is determined automatically).
      * @param	Text	The actual text you would like to display initially.
      */
+    static TextPtr create(float X, float Y, int Width, std::string Text=std::string());
+
     Text(float X, float Y, int Width, std::string Text=std::string());
     virtual ~Text() { }
     
+#if 0
     /**
      * You can use this if you have a lot of text parameters
      * to set instead of the individual properties.
@@ -62,6 +63,7 @@ public:
      * @return	This Text instance (nice for chaining stuff together, if you're into that).
      */
     // Text& setFormat(Font:String=null,Size:Number=8,Color:uint=0xffffff,Alignment:String=null,ShadowColor:uint=0);
+#endif
     
     /**
      * The text being displayed.
@@ -76,7 +78,7 @@ public:
     void printf(const char* format, ...);
     
     /**
-     * The size of the text being displayed.
+     * The size (height) of the text being displayed.
      */
     float getSize();
 

@@ -27,8 +27,10 @@ class Sprite;
 typedef shared_ptr<Sprite> SpritePtr;
 
 /**
-* The main "game object" class, handles basic physics and animation.
-*/
+ * The main "game object" class, handles basic physics and animation.
+ *
+ * @example sprite_basic.cpp
+ */
 class Sprite : public Object
 {
 public:

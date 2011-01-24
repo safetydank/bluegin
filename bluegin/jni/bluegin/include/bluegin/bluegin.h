@@ -36,8 +36,8 @@ initialization, transitioning and cleanup.
 \subsection entities_ss Entities (objects and sprites)
 
 Game entities derive from a unified hierarchy.  Custom game entities can derive
-from a minimal flx::Object class or a flx::Sprite class that manages object
-rendering, animations and collision.
+from a minimal flx::Object class or a flx::Sprite class that manages rendering
+and animation.
 
 \subsection groups_ss Group management
 
