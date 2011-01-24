@@ -13,21 +13,19 @@
 
 namespace flx {
 
-/**
- * This is a traditional tilemap display and collision class.
- * It takes a string of comma-separated numbers and then associates
- * those values with tiles from the sheet you pass in.
- * It also includes some handy static parsers that can convert
- * arrays or PNG files into strings that can be successfully loaded.
- */
-
 enum Tiling
 {
+    /// No auto-tiling.
     OFF,
+    /// Platformer-friendly auto-tiling.
     AUTO,
+    /// Top-down auto-tiling.
     ALT
 };
 
+/**
+ * This is a traditional tilemap display and collision class.
+ */
 class Tilemap : public Object
 {
 public:
@@ -229,6 +227,9 @@ protected:
 
 typedef shared_ptr<Tilemap> TilemapPtr;
 
+/**
+ * Internal struct used to parse Ogmo XML entities
+ */
 struct OgmoObject
 {
     int x;
@@ -242,7 +243,7 @@ struct OgmoObject
 };
 
 /**
- *   A class for reading tilemaps from an Ogmo level file
+ *   A class for reading tilemaps from an Ogmo XML level file
  */
 class OgmoLoader
 {
@@ -251,13 +252,13 @@ public:
     OgmoLoader(const char* LevelFile);
     ~OgmoLoader();
 
-    //  Load a named tiles layer to a tilemap
+    ///  Load a named tiles layer to a tilemap
     void loadTiles(Tilemap& tilemap, const char* Layer);
-    //  Load level values
+    ///  Load level values
     bool loadValues(OgmoObject& object);
-    //  Load first matching object
+    ///  Load first matching object
     bool loadObject(OgmoObject& object, const char* Parent, const char* Name);
-    //  Load all matching objects
+    ///  Load all matching objects
     bool loadObjects(vector<OgmoObject>& objects, const char* Parent, const char* Name);
 
     //  XML level node

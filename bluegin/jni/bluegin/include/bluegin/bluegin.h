@@ -1,7 +1,7 @@
 #pragma once
 
 /**
-\mainpage BlueGin Documentation
+\mainpage BlueGin Reference
 
 \section overview_sec Overview
 
@@ -117,19 +117,100 @@ namespace std {
 typedef boost::uint32_t index_t;
 #endif
 
+/**
+ * Load a named texture asset
+ *
+ * @param s the name of the texture asset
+ * @param width pointer to an int that will store the texture width
+ * @param height pointer to an int that will store the texture height
+ * @return OpenGL texture ID
+ */
 int   bluegin_load_texture(const char *s, int* width, int* height);
+
+/**
+ * Load a named resource as a raw byte array
+ *
+ * @param s the name of the resource
+ * @param size pointer to an int that will store the resource length in bytes read
+ */
 void* bluegin_load_resource(const char *s, int* size);
 
+/**
+ * Play a named music resource
+ *
+ * @param fname the music resource
+ */
 void  bluegin_music_play(const char* fname);
+
+/**
+ * Stop all playing music
+ */
 void  bluegin_music_stop();
+
+/**
+ * Check if music is currently playing
+ *
+ * @return true if music is playing, otherwise false
+ */
 bool  bluegin_music_is_playing();
+
+/**
+ * Initialize BlueGin sound system
+ */
 void  bluegin_sound_init();
+
+/**
+ * Load a sound effect resource
+ *
+ * @param fname the sound effect resource
+ * @return a sound ID used by bluegin_sound_play
+ */
 int   bluegin_sound_load(const char* fname);
+
+/**
+ * Play a sound effect resource
+ *
+ * @param sid the sound ID returned from bluegin_sound_load
+ * @return a stream ID for adjusting the sound's playback
+ */
 int   bluegin_sound_play(int sid, float leftVolume, float rightVolume, int priority, int loop, float rate);
+
+/**
+ * Stop a currently playing sound.  If the sound is not playing it has no effect.
+ *
+ * @param streamID a stream ID returned from bluegin_sound_play
+ */
 void  bluegin_sound_stop(int streamID);
+
+/**
+ * Set the pitch of a currently playing sound.
+ *
+ * @param streamID a stream ID returned from bluegin_sound_play
+ * @param a resampling rate in the range [0.5, 2.0]
+ */
 void  bluegin_sound_set_pitch(int streamID, float rate);
+
+/**
+ * Set the volume of a currently playing sound.
+ *
+ * @param streamID a stream ID returned from bluegin_sound_play
+ * @param leftVolume the left channel volume level [0, 1.0]
+ * @param rightVolume the right channel volume level [0, 1.0]
+ */
 void  bluegin_sound_set_volume(int streamID, float leftVolume, float rightVolume);
+
+/**
+ * Pause a currently playing sound
+ *
+ * @param streamID a stream ID returned from bluegin_sound_play
+ */
 void  bluegin_sound_pause(int streamID);
+
+/**
+ * Resume a paused sound
+ *
+ * @param streamID a stream ID returned from bluegin_sound_play
+ */
 void  bluegin_sound_resume(int streamID);
 
 using boost::shared_ptr;
@@ -141,4 +222,14 @@ using boost::shared_ptr;
 using std::vector;
 using std::map;
 using std::string;
+
+///  A subset of the Cinder creative coding library
+namespace cinder {
+    ///  Cinder's GL abstraction layer
+    namespace gl { }
+    ///  Cinder's application interface
+    namespace app { }
+}
+///  Fast XML parser
+namespace rapidxml { }
 

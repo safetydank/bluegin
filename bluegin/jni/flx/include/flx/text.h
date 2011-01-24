@@ -9,6 +9,8 @@
 namespace flx {
 
 //  Same values as used by Font class
+
+///  Text alignment
 enum TextAlign
 {
     ALIGN_LEFT   = 0,
@@ -125,5 +127,11 @@ public:
 
      bluegin::TextRenderData& getTextRenderData();
 };
+
+/**
+ * Display text
+ *
+ * @example text_display.cpp
+ */
 
 }

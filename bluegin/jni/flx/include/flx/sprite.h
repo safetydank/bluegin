@@ -28,12 +28,18 @@ typedef shared_ptr<Sprite> SpritePtr;
 
 /**
  * The main "game object" class, handles basic physics and animation.
- *
- * @example sprite_basic.cpp
  */
 class Sprite : public Object
 {
 public:
+    /**
+     * Creates a white 8x8 square <code>FlxSprite</code> at the specified position.
+     * Optionally can load a simple, one-frame graphic instead.
+     * 
+     * @param	X				The initial X position of the sprite.
+     * @param	Y				The initial Y position of the sprite.
+     * @param	SimpleGraphic	The graphic you want to display (OPTIONAL - for simple stuff only, do NOT use for animated images!).
+     */
     static SpritePtr create(float x=0, float y=0, bluegin::Graphic graphic=bluegin::Graphic());
 
     Sprite(float x=0, float y=0, bluegin::Graphic graphic=bluegin::Graphic());
@@ -53,10 +59,10 @@ public:
     ci::Vec2f scale;
 
     /**
-     * Controls whether the object is smoothed when rotated, affects performance.
-     * @default false
+     * Not used
      */
     bool antialiasing;
+
     /**
      * Whether the current animation has finished its first (or only) loop.
      */
@@ -227,6 +233,12 @@ public:
     virtual int getFrameWidth() { return frameWidth; }
     virtual int getFrameHeight() { return frameHeight; }
 };
+
+/**
+ * A bouncing ball example using a single sprite
+ *
+ * @example sprite_basic.cpp
+ */
 
 }
 

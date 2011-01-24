@@ -18,18 +18,6 @@ static Rect quadTreeBounds;
 
 namespace flx { namespace FlxU {
 
-    /**
-     * Call this function to specify a more efficient boundary for your game world.
-     * This boundary is used by <code>overlap()</code> and <code>collide()</code>, so it
-     * can't hurt to have it be the right size!  Flixel will invent a size for you, but
-     * it's pretty huge - 256x the size of the screen, whatever that may be.
-     * Leave width and height empty if you want to just update the game world's position.
-     * 
-     * @param	X		The X-coordinate of the left side of the game world.
-     * @param	Y		The Y-coordinate of the top of the game world.
-     * @param	Width	Desired width of the game world.
-     * @param	Height	Desired height of the game world.
-     */
     void setWorldBounds(float X, float Y, float Width, float Height, int Divisions)
     {
         quadTreeBounds.x = X;
@@ -42,18 +30,6 @@ namespace flx { namespace FlxU {
             FlxU::quadTreeDivisions = Divisions;
     }
 
-    /**
-     * Rotates a point in 2D space around another point by the given angle.
-     * 
-     * @param	X		The X coordinate of the point you want to rotate.
-     * @param	Y		The Y coordinate of the point you want to rotate.
-     * @param	PivotX	The X coordinate of the point you want to rotate around.
-     * @param	PivotY	The Y coordinate of the point you want to rotate around.
-     * @param	Angle	Rotate the point by this many degrees.
-     * @param	P		Optional <code>FlxPoint</code> to store the results in.
-     * 
-     * @return	A <code>FlxPoint</code> containing the coordinates of the rotated point.
-     */
     Vec2f rotatePoint(float X, float Y, float PivotX, float PivotY, float Angle, Vec2f* dst)
     {
         Vec2f P;
@@ -69,17 +45,6 @@ namespace flx { namespace FlxU {
         return P;
     }
 
-    /**
-     * A tween-like function that takes a starting velocity
-     * and some other factors and returns an altered velocity.
-     * 
-     * @param	Velocity		Any component of velocity (e.g. 20).
-     * @param	Acceleration	Rate at which the velocity is changing.
-     * @param	Drag			Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
-     * @param	Max				An absolute value cap for the velocity.
-     * 
-     * @return	The altered Velocity value.
-     */
     float computeVelocity(float Velocity, float Acceleration, float Drag, float Max)
     {
         if (Acceleration != 0)
@@ -144,13 +109,6 @@ namespace flx { namespace FlxU {
     }
 
 
-    /**
-     * This quad tree callback function can be used externally as well.
-     * Takes two objects and separates them along their X axis (if possible/reasonable).
-     * 
-     * @param	Object1		The first object or group you want to check.
-     * @param	Object2		The second object or group you want to check.
-     */
     bool solveXCollision(Object& Object1, Object& Object2)
     {
         //Avoid messed up collisions ahead of time
@@ -339,13 +297,6 @@ namespace flx { namespace FlxU {
         return hit;
     }
 
-    /**
-     * This quad tree callback function can be used externally as well.
-     * Takes two objects and separates them along their Y axis (if possible/reasonable).
-     * 
-     * @param	Object1		The first object or group you want to check.
-     * @param	Object2		The second object or group you want to check.
-     */
     bool solveYCollision(Object& Object1, Object& Object2)
     {
         //Avoid messed up collisions ahead of time

@@ -10,8 +10,10 @@
 #include "cinder/app/MouseEvent.h"
 #include "cinder/app/AppBasic.h"
 
+///  Platform abstraction layer
 namespace bluegin {
-//  Emulates a BlueGin app on Windows Cinder
+
+///  Emulates a BlueGin app on Windows Cinder
 class BlueginApp : public ci::app::AppBasic
 {
 public:

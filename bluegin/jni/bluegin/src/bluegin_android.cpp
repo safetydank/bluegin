@@ -88,7 +88,7 @@ int bluegin_load_texture(const char *s, int* width, int* height)
     int ndim[2];
     env->GetIntArrayRegion(dim, 0, 2, ndim);
     *width = ndim[0]; *height = ndim[1];
-    Log("bluegin_load_texture: received dims %d %d", *width, *height);
+    // Log("bluegin_load_texture: received dims %d %d", *width, *height);
     
     return ret;
 }

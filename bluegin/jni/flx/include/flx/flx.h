@@ -20,18 +20,23 @@
 using std::vector;
 using boost::shared_ptr;
 
+/// 2D game engine 
 namespace flx {
 
 class Object;
 
 typedef bool (*OverlapCallback)(Object&, Object&);
 
+/// Global utility methods for flx
 namespace FlxU {
     // inline float floor(float x) { return ::floor(x); }
+
+    ///  Round down a number
     inline float floor(float N) { 
         float n = float(int(N));
         return (N>0)?(n):((n!=N)?(n-1):(n)); 
     }
+    ///  Round up a number
     inline float ceil(float N) {
         return ::ceilf(N);
     }
@@ -40,10 +45,10 @@ namespace FlxU {
      * A tween-like function that takes a starting velocity
      * and some other factors and returns an altered velocity.
      * 
-     * @param	Velocity		Any component of velocity (e.g. 20).
-     * @param	Acceleration	Rate at which the velocity is changing.
-     * @param	Drag			Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
-     * @param	Max				An absolute value cap for the velocity.
+     * @param	vel     Any component of velocity (e.g. 20).
+     * @param	acc     Rate at which the velocity is changing.
+     * @param	drag    Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
+     * @param	max     An absolute value cap for the velocity.
      * 
      * @return	The altered Velocity value.
      */
@@ -52,12 +57,12 @@ namespace FlxU {
     /**
      * Rotates a point in 2D space around another point by the given angle.
      * 
-     * @param	X		The X coordinate of the point you want to rotate.
-     * @param	Y		The Y coordinate of the point you want to rotate.
-     * @param	PivotX	The X coordinate of the point you want to rotate around.
-     * @param	PivotY	The Y coordinate of the point you want to rotate around.
-     * @param	Angle	Rotate the point by this many degrees.
-     * @param	P		Optional <code>Point</code> to store the results in.
+     * @param	x		The X coordinate of the point you want to rotate.
+     * @param	y		The Y coordinate of the point you want to rotate.
+     * @param	pivotX	The X coordinate of the point you want to rotate around.
+     * @param	pivotY	The Y coordinate of the point you want to rotate around.
+     * @param	angle	Rotate the point by this many degrees.
+     * @param	Dst		Optional <code>Point</code> to store the results in.
      * 
      * @return	A <code>Point</code> containing the coordinates of the rotated point.
      */
@@ -148,10 +153,13 @@ namespace FlxU {
     const float roundingError = 1e-3f;
 
     /**
-     * Helper function to convert from a 32-bit hex color value to a Cinder Color
+     * Helper function to convert from a Flixel-style 32-bit hex color value to a <code>Color</code>
      */
     ci::ColorA color(unsigned int c);
 
+    /**
+     * Controls the granularity of the quad tree.  Default is 3 (decent performance on large and small worlds).
+     */
     FLXU_STATIC int quadTreeDivisions;
 }
 
