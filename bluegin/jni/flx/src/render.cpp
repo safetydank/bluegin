@@ -15,7 +15,7 @@ using namespace ci::gl;
 using namespace bluegin;
 
 //  Max primitives (quads) to render in a batch.
-const int VBO_QUADS = 100;
+const int VBO_QUADS = 64;
 
 // XXX DEBUG
 int SPRITES = 0;

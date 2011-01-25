@@ -4,6 +4,8 @@
 #include "flx/quadtree.h"
 #include "flx/flxG.h"
 
+#include "cinder/Rand.h"
+
 #include <cstdlib>
 
 using namespace bluegin;
@@ -71,7 +73,7 @@ namespace flx { namespace FlxU {
 
     float random()
     {
-        return float(rand()) / RAND_MAX;
+        return Rand::randFloat();
     }
 
     bool overlap(Object& Object1, Object& Object2, OverlapCallback Callback)

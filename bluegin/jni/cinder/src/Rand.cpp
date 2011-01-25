@@ -39,8 +39,7 @@ void Rand::randomize()
 #if defined( CINDER_COCOA )
 	sBase = boost::mt19937( mach_absolute_time() );
 #elif defined( CINDER_BLUEGIN )
-    // XXX HACK
-    sBase = boost::mt19937( 1234567890 );
+    sBase = boost::mt19937( time(NULL) );
 #else
 	sBase = boost::mt19937( ::GetTickCount() );
 #endif
