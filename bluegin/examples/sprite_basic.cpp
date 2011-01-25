@@ -29,8 +29,8 @@ public:
         }
 
         //  Limit sprite position
-        sp.x = math::clamp(sp.x, 0, FlxG.width);
-        sp.y = math::clamp(sp.y, 0, FlxG.height);
+        sp.x = math<float>::clamp(sp.x, 0, FlxG.width);
+        sp.y = math<float>::clamp(sp.y, 0, FlxG.height);
 
         //  Updates the state's default group
         State::update();
