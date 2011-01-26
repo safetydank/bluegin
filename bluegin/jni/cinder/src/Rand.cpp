@@ -40,6 +40,8 @@ void Rand::randomize()
 	sBase = boost::mt19937( mach_absolute_time() );
 #elif defined( CINDER_BLUEGIN )
     sBase = boost::mt19937( time(NULL) );
+    sFloatGen();
+    sIntGen();
 #else
 	sBase = boost::mt19937( ::GetTickCount() );
 #endif

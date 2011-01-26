@@ -73,7 +73,8 @@ namespace flx { namespace FlxU {
 
     float random()
     {
-        return Rand::randFloat();
+        // return Rand::randFloat();
+        return float(rand()) / RAND_MAX;
     }
 
     bool overlap(Object& Object1, Object& Object2, OverlapCallback Callback)

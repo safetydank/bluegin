@@ -149,19 +149,19 @@ class Rand {
 	}
 	
 	//! returns a random float in the range [0.0f,1.0f]
-	static float randFloat()
+	static inline float randFloat()
 	{
 		return sFloatGen();
 	}
 	
 	//! returns a random float in the range [0.0f,v]
-	static float randFloat( float v )
+	static inline float randFloat( float v )
 	{
 		return sFloatGen() * v;
 	}
 	
 	//! returns a random float in the range [a,b]
-	static float randFloat( float a, float b )
+	static inline float randFloat( float a, float b )
 	{
 		return sFloatGen() * ( b - a ) + a;
 	}
