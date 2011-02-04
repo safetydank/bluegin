@@ -18,7 +18,8 @@ Boost to build.
 
 1.  Install Cinder including Boost v1.44 (or newer)
 
-2.  Edit bluegin/Common.mk and set BOOST_SRC to your Boost path.
+2.  Set an environment variable BOOST_SRC to point to your Boost path
+    (e.g. /src/Cinder/boost) 
 
 3.  Build BlueGin game engine (native and Java libraries)
 
