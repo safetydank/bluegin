@@ -15,7 +15,7 @@ using namespace ci::gl;
 using namespace bluegin;
 
 //  Max primitives (quads) to render in a batch.
-const int VBO_QUADS = 64;
+const int VBO_QUADS = 128;
 
 // XXX DEBUG
 int SPRITES = 0;
@@ -133,16 +133,14 @@ void Renderer::drawBatch()
         glDisable(GL_TEXTURE_2D);
     }
 
-    //  Try using vertex arrays
+    //  Using vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
-
-    if (mBatchState.colored)
-        glEnableClientState(GL_COLOR_ARRAY);
-
     glVertexPointer(3, GL_FLOAT, 0, &mPositions[0]);
 
-    if (mBatchState.colored)
+    if (mBatchState.colored) {
+        glEnableClientState(GL_COLOR_ARRAY);
         glColorPointer(4, GL_FLOAT, 0, &mColors[0]);
+    }
 
     glDrawArrays(GL_TRIANGLES, 0, mIndexCount);
 
@@ -179,7 +177,7 @@ void Renderer::setBatchState(BatchState& state)
 
     if (textureChanged || alphaBlendChanged || coloredChanged) {
         //  finish batch, prepare to start new
-        drawBatch();
+        if (mIndexCount) drawBatch();
         mBatchState = state;
     }
 }

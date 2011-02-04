@@ -11,6 +11,11 @@ using namespace rapidxml;
 
 extern FlxGlobal FlxG;
 
+TilemapPtr Tilemap::create()
+{
+    return TilemapPtr(new Tilemap());
+}
+
 Tilemap::Tilemap() : Object(0, 0, 0, 0), _block(0, 0, 0, 0)
 {
     autoTiling = OFF;

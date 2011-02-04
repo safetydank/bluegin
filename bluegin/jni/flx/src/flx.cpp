@@ -1,6 +1,7 @@
 #define FLXU_STATIC
 #include "flx/flx.h"
 #include "flx/object.h"
+#include "flx/group.h"
 #include "flx/quadtree.h"
 #include "flx/flxG.h"
 
@@ -11,6 +12,9 @@
 using namespace bluegin;
 using namespace cinder;
 using namespace flx;
+
+#include <set>
+using std::set;
 
 //  globals
 FlxGlobal FlxG;
@@ -111,6 +115,113 @@ namespace flx { namespace FlxU {
         return cx || cy;			
     }
 
+    struct LTOBJ {
+        bool operator()(Object* g1, Object* g2) const { return (&g1 < &g2); }
+    };
+
+    typedef set<Object*, LTOBJ> ObjectSet;
+
+    //  Based on flixel-ios collideObject method
+    bool collide2(Object& object, Group& group)
+    {
+        if (!object.exists || !group.exists || !object.solid)
+            return false;
+        ObjectSet toCollide;
+        toCollide.insert(&group);
+        bool c = false;
+        float objectLeft = object.x;// + roundingError;
+        float objectRight = object.x + object.width;// - roundingError;
+        float objectTop = object.y;// + roundingError;
+        float objectBottom = object.y + object.height;// - roundingError;
+        while (!toCollide.empty()) {
+            ObjectSet::iterator it = toCollide.begin();
+            Object& groupObject = **it;
+            toCollide.erase(it);
+
+            if (groupObject._group) {
+                Group& groupRef = static_cast<Group&>(groupObject);
+                for (vector<ObjectPtr>::iterator it=groupRef.members.begin();
+                    it != groupRef.members.end(); ++it) {
+                        toCollide.insert(it->get());
+                }
+                // toCollide.insert(groupRef.members.begin(), groupRef.members.end());
+            }
+            else if (!(&object == &groupObject || !groupObject.exists || !groupObject.solid ||
+                        objectRight < groupObject.x ||
+                        objectLeft > groupObject.x + groupObject.width ||
+                        objectBottom < groupObject.y ||
+                        objectTop > groupObject.y + groupObject.height)) {
+                c |= solveXCollision(object, groupObject);
+                c |= solveYCollision(object, groupObject);
+            }
+        }
+        return c;
+    }
+
+    //  Based on flixel-ios alternateCollide method
+    bool alternateCollide(Object& Object1, Object& Object2)
+    {
+        if (!Object1.exists || !Object2.exists)
+            return false;
+
+        ObjectSet set1;
+        ObjectSet set2;
+
+        ObjectSet toAdd;
+        toAdd.insert(&Object1);
+
+        while (!toAdd.empty()) {
+            ObjectSet::iterator it = toAdd.begin();
+            Object& obj = **it;
+            toAdd.erase(it);
+            if (obj._group) {
+                Group& groupRef = static_cast<Group&>(obj);
+                for (vector<ObjectPtr>::iterator it=groupRef.members.begin();
+                    it != groupRef.members.end(); ++it) {
+                        toAdd.insert(it->get());
+                }
+            }
+            else {
+                set1.insert(&obj);
+            }
+        }
+
+        toAdd.insert(&Object2);
+        while (!toAdd.empty()) {
+            ObjectSet::iterator it = toAdd.begin();
+            Object& obj = **it;
+            toAdd.erase(it);
+            if (obj._group) {
+                Group& groupRef = static_cast<Group&>(obj);
+                for (vector<ObjectPtr>::iterator it=groupRef.members.begin();
+                    it != groupRef.members.end(); ++it) {
+                        toAdd.insert(it->get());
+                }
+            }
+            else {
+                set2.insert(&obj);
+            }
+        }
+
+        //brute force it
+        bool c = false;
+        for (ObjectSet::iterator it1 = set1.begin(); it1 != set1.end(); ++it1) {
+            for (ObjectSet::iterator it2 = set2.begin(); it2 != set2.end(); ++it2) {
+                Object& obj1 = **it1;
+                Object& obj2 = **it2;
+
+                if (&obj1 == &obj2 || !obj1.exists || !obj2.exists || !obj1.solid || !obj2.solid ||
+                        (obj1.x + obj1.width < obj2.x + roundingError) ||
+                        (obj1.x + roundingError > obj2.x + obj2.width) ||
+                        (obj1.y + obj1.height < obj2.y + roundingError) ||
+                        (obj1.y + roundingError > obj2.y + obj2.height))
+                    continue;
+                c |= solveXCollision(obj1, obj2);
+                c |= solveYCollision(obj1, obj2);
+            }
+        }
+        return c;
+    }
 
     bool solveXCollision(Object& Object1, Object& Object2)
     {
@@ -179,10 +290,10 @@ namespace flx { namespace FlxU {
                 obj2Hull.y += oy2;
 
                 //See if it's a actually a valid collision
-                if( (obj1Hull.x + obj1Hull.width  < obj2Hull.x + roundingError) ||
-                    (obj1Hull.x + roundingError > obj2Hull.x + obj2Hull.width) ||
-                    (obj1Hull.y + obj1Hull.height < obj2Hull.y + roundingError) ||
-                    (obj1Hull.y + roundingError > obj2Hull.y + obj2Hull.height) )
+                if( (obj1Hull.x + obj1Hull.width - obj2Hull.x < roundingError) ||
+                    (roundingError > obj2Hull.x + obj2Hull.width - obj1Hull.x) ||
+                    (obj1Hull.y + obj1Hull.height - obj2Hull.y < roundingError) ||
+                    (roundingError > obj2Hull.y + obj2Hull.height - obj1Hull.y) )
                 {
                     obj2Hull.x -= ox2;
                     obj2Hull.y -= oy2;
@@ -367,10 +478,10 @@ namespace flx { namespace FlxU {
                 obj2Hull.y += oy2;
 
                 //See if it's a actually a valid collision
-                if( (obj1Hull.x + obj1Hull.width  < obj2Hull.x + roundingError) ||
-                    (obj1Hull.x + roundingError > obj2Hull.x + obj2Hull.width) ||
-                    (obj1Hull.y + obj1Hull.height < obj2Hull.y + roundingError) ||
-                    (obj1Hull.y + roundingError > obj2Hull.y + obj2Hull.height) )
+                if( (obj1Hull.x + obj1Hull.width - obj2Hull.x < roundingError) ||
+                    (roundingError > obj2Hull.x + obj2Hull.width - obj1Hull.x) ||
+                    (obj1Hull.y + obj1Hull.height - obj2Hull.y < roundingError) ||
+                    (roundingError > obj2Hull.y + obj2Hull.height - obj1Hull.y) )
                 {
                     obj2Hull.x -= ox2;
                     obj2Hull.y -= oy2;

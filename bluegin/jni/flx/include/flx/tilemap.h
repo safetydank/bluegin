@@ -23,6 +23,9 @@ enum Tiling
     ALT
 };
 
+class Tilemap;
+typedef shared_ptr<Tilemap> TilemapPtr;
+
 /**
  * This is a traditional tilemap display and collision class.
  */
@@ -83,6 +86,7 @@ public:
      * The tilemap constructor just initializes some basic variables.
      */
     Tilemap();
+    static TilemapPtr create();
 
     /**
      * Loads a tilemap from a resource data
@@ -224,8 +228,6 @@ protected:
      */
     void updateTile(int Index);
 };
-
-typedef shared_ptr<Tilemap> TilemapPtr;
 
 /**
  * Internal struct used to parse Ogmo XML entities

@@ -24,6 +24,7 @@ using boost::shared_ptr;
 namespace flx {
 
 class Object;
+class Group;
 
 typedef bool (*OverlapCallback)(Object&, Object&);
 
@@ -104,6 +105,12 @@ namespace FlxU {
      * @param	Object2		The second object or group you want to check.  If it is the same as the first, flixel knows to just do a comparison within that group.
      */
     bool collide(Object& object1, Object& object2);
+    
+    ///  Based on flixel-ios brute force collision method (no quadtree)
+    bool collide2(Object& object, Group& group);
+
+    ///  Based on flixel-ios brute force collision method (no quadtree)
+    bool alternateCollide(Object& Object1, Object& Object2);
 
     /**
      * This quad tree callback function can be used externally as well.
