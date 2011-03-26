@@ -1,4 +1,9 @@
 """
+Bluegin Asset Packer script
+
+Reads a description of assets from data/resources.pack and outputs assets with
+resource manager configuration.
+
 Image packing code from http://www.pygame.org/wiki/ImagePacker?parent=CookBook 
 """
 
@@ -19,7 +24,7 @@ ASSETS_FOLDER = 'assets'
 
 assetcount = dict(textures=0, graphics=0, fonts=0, sounds=0, musics=0)
 
-def _pack_textures(basedir, fp, config, teximage, width, height, name):
+def _pack_textures(basedir, fp, config, texture_path, width, height, name):
     texinputs = []
 
     line = fp.readline()
@@ -33,9 +38,9 @@ def _pack_textures(basedir, fp, config, teximage, width, height, name):
 
     format = 'RGBA'
     size = (width, height)
-    images = sorted([ (i.size[0] * i.size[1], gid, i) 
-                      for gid, i in ((gid,Image.open(os.path.join(basedir, x)).convert(format)) 
-                                      for (gid, x) in texinputs)])
+    images = sorted([ (img.size[0] * img.size[1], gid, img) 
+                      for gid, img in ((gid,Image.open('/'.join((basedir, x))).convert(format)) 
+                                       for (gid, x) in texinputs) ])
     tree = PackNode(size)
     image = Image.new(format, size)
     graphics = []
@@ -45,13 +50,13 @@ def _pack_textures(basedir, fp, config, teximage, width, height, name):
         graphics.append((gid, uv.area))
         image.paste(img, uv.area)
 
-    image.save(os.path.join(ASSETS_FOLDER, teximage))
+    image.save('/'.join((ASSETS_FOLDER, texture_path)))
     config.write("""\
 Texture %s {
     source = %s
 }
 
-""" % (name, teximage))
+""" % (name, texture_path))
     assetcount['textures'] += 1
 
     for (graphic, area) in graphics:
@@ -65,8 +70,11 @@ Graphic %s {
         assetcount['graphics'] += 1
 
 def _write_font(config, name, font_config, font_image):
-    shutil.copy(os.path.join(basedir, font_config), ASSETS_FOLDER)
-    shutil.copy(os.path.join(basedir, font_image), ASSETS_FOLDER)
+    config_asset_path = verify_asset_path(font_config)
+    image_asset_path = verify_asset_path(font_image)
+
+    shutil.copy(os.path.join(basedir, font_config), config_asset_path)
+    shutil.copy(os.path.join(basedir, font_image), image_asset_path)
     config.write("""\
 Texture %s {
     source = %s
@@ -89,12 +97,42 @@ def _write_sound(config, tag, name, path):
 """ % (tag, name, path))
     assetcount['sounds' if tag == 'Sound' else 'musics'] += 1
 
+def _write_texture(config, name, path):
+    config.write("""\
+Texture %s {
+    source = %s
+}
+""" % (name, path))
+    assetcount['textures'] += 1
+
+
+def verify_asset_path(path):
+    """
+    If a source asset path is in a subfolder of "data/", check the subfolder exists
+    in "assets" and create it if necessary
+
+    Returns the destination asset path
+    """
+
+    path_parts = path.split('/')
+    if len(path_parts) == 1:
+        return ASSETS_FOLDER
+
+    path_dirs = path_parts[:-1]
+    for i in range(len(path_dirs)):
+        check_path = os.path.join(ASSETS_FOLDER, *path_dirs[0:i+1])
+        if not os.path.exists(check_path):
+            os.mkdir(check_path)
+
+    return os.path.join(ASSETS_FOLDER, *path_dirs)
+
 def process_command(fp, basedir, config, command):
     if command[0] == 'TexturePack':
         name = command[1]
         teximage = command[2]
         width = int(command[3])
         height = int(command[4])
+        asset_path = verify_asset_path(teximage)
         _pack_textures(basedir, fp, config, teximage, width, height, name)
     elif command[0] == 'Font':
         name = command[1]
@@ -102,18 +140,34 @@ def process_command(fp, basedir, config, command):
         font_image = command[3]
         _write_font(config, name, font_config, font_image)
     elif command[0] == 'Texture':
+        # Copy a texture file to the assets folder and write resources.config 
+        # entry
         name = command[1]
-        texture_path = os.path.join(basedir, command[2])
-        shutil.copy(texture_path, ASSETS_FOLDER)
+        texture_path = command[2]
+        resource_path = os.path.join(basedir, texture_path)
+        asset_path = verify_asset_path(texture_path)
+        shutil.copy(resource_path, asset_path)
+        # Reuse path as asset name if name is set to '*'
+        if name == '*':
+            name = texture_path
+        _write_texture(config, name, texture_path)
     elif command[0] == 'Resource':
+        # Copy a file directly to the assets folder
         resource_path = os.path.join(basedir, command[1])
-        shutil.copy(resource_path, ASSETS_FOLDER)
+        asset_path = verify_asset_path(command[1])
+        shutil.copy(resource_path, asset_path)
     elif command[0] == 'Music' or command[0] == 'Sound':
+        # Copy a music/sound file to the assets folder and write 
+        # resources.config entry
         tag  = command[0]
         name = command[1]
         path = command[2]
-        resource_path = os.path.join(basedir, path)
-        shutil.copy(resource_path, ASSETS_FOLDER)
+        asset_path = verify_asset_path(path)
+        resource_path = '/'.join((basedir, path))
+        shutil.copy(resource_path, asset_path)
+        # Reuse path as asset name if name is set to '*'
+        if name == '*':
+            name = path
         _write_sound(config, tag, name, path)
 
 def assemble(basedir):
