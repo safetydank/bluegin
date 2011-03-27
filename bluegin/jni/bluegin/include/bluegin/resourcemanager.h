@@ -10,6 +10,15 @@ namespace bluegin {
 
 struct ResourceConfig;
 
+struct CachedTexture
+{
+    bool   active;
+    string source;
+    ci::gl::Texture texture;
+
+    CachedTexture() : active(false) { }
+};
+
 class ResourceManager
 {
 public:
@@ -17,9 +26,28 @@ public:
     ~ResourceManager();
 
     void loadResourceConfig(const char* configPath);
-    bool loadTexture(ResourceConfig& rc);
-    bool loadGraphic(ResourceConfig& rc);
-    bool loadFont(ResourceConfig& rc);
+
+    /**
+     * Load a single named texture into GPU memory
+     * @param texName texture name specified in resource config
+     */
+    bool acquireTexture(string texName);
+    /**
+     * Release GPU memory associated with named texture
+     * @param texName texture name specified in resource config
+     */
+    void releaseTexture(string texName);
+    /**
+     * Load all textures from config file into GPU memory
+     * @param updateGraphics call updateGraphics() after acquiring textures if true
+     */
+    void acquireAllTextures(bool updateGraphics=true);
+    /**
+     * Updates all graphic associations with active textures
+     * Should be called after acquiring a new set of textures.
+     */
+    void updateGraphics();
+
     bool loadSound(SoundType type, ResourceConfig& rc);
     bool loadMusic(ResourceConfig& rc);
 
@@ -31,24 +59,41 @@ public:
     //  Sound API designed for two scenarios:
     //  
     //  1.  One set of samples used throughout the app.  In this case call
-    //      primeAllSounds() once at the start of the App - all sounds are loaded
+    //      acquireAllSounds() once at the start of the App - all sounds are loaded
     //      and added to the SoundPool.
     //
     //  2.  Different sound sets used in different states (e.g. levels/worlds).
-    //      Call resetSounds() to clear the soundpool at the beginning of state
-    //      create() and then call primeSound to add each sound source for playback.
+    //      Call releaseAllSounds() to clear the soundpool at the beginning of state
+    //      create() and then call acquireSound to add each sound source for playback.
     //
-    //  These calls have no effect on MUSIC_TYPE sound sources.
+    //  These calls have no effect on MUSIC_TYPE (streamed) sound sources
 
-    //  Prime a sound for playback
-    void primeSound(AudioSourcePtr sound);
-    //  Prime all the loaded sounds for playback
-    void primeAllSounds();
+    //  Acquire a sound for playback
+    void acquireSound(AudioSourcePtr sound);
+    //  Acquire all the loaded sounds for playback
+    void acquireAllSounds();
     //  Unprime all the sounds and initializes a new SoundPool
-    void resetSounds();
+    void releaseAllSounds();
 
 protected:
-    map<string, ci::gl::Texture> mTextures;
+    ///  Save single texture configuration 
+    bool loadTexture(ResourceConfig& rc);
+    /**
+     * Create a graphic with empty texture from configuration
+     * Call updateGraphics() to associate active textures (for all entries)
+     */
+    bool loadGraphic(ResourceConfig& rc);
+
+    /**
+     * Loads a font and acquires associated texture
+     */
+    bool loadFont(ResourceConfig& rc);
+
+    GLenum mMagFilter;
+    GLenum mMinFilter;
+
+    map<string, CachedTexture> mTextures;
+    // map<string, ci::gl::Texture> mTextures;
     map<string, Graphic>         mGraphics;
     map<string, FontPtr>         mFonts;
     map<string, AudioSourcePtr>  mSounds;

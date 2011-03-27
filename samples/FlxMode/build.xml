@@ -17,5 +17,6 @@
         classpathref="android.antlibs" />
     <setup />
 
-    <copy file="../../bluegin/bin/BlueGin.jar" todir="${jar.libs.dir}" />
+    <!-- <copy file="../../bluegin/bin/BlueGin.jar" todir="${jar.libs.dir}" /> -->
+    <copy file="../../bluegin/bin/BlueGin.jar" todir="${external.libs.dir}" />
 </project>

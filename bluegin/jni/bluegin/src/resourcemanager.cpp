@@ -11,6 +11,9 @@ using namespace bluegin;
 
 ResourceManager::ResourceManager()
 {
+    //  Use nearest neighbour filtering by default
+    mMagFilter = GL_NEAREST;
+    mMinFilter = GL_NEAREST;
 }
 
 ResourceManager::~ResourceManager()
@@ -19,41 +22,136 @@ ResourceManager::~ResourceManager()
 
 bool ResourceManager::loadTexture(ResourceConfig& rc)
 {
-    bool success = true;
+    CachedTexture tex;
+
     string name = rc.name;
-    string texturePath;
+    string source;
 
     //  Read key values
     for (vector<KeyValue>::iterator it = rc.keyValues.begin();
                                     it != rc.keyValues.end(); ++it) {
         KeyValue& kv = *it;
         if (kv.key.compare("source") == 0) {
-            texturePath = kv.getString();
+            tex.source = kv.getString();
         }
     }
 
-    if (texturePath.empty()) {
+    if (tex.source.empty()) {
         Log("Error: Empty texture path for texture '%s'", name.c_str());
-        success = false;
+        return false;
     }
-    Texture tex(bluegin::getTextureAsset(texturePath.c_str()));
-    if (!tex) {
-        Log("Error loading texture '%s' from path %s", name.c_str(), texturePath.c_str());
-        success = false;
-    }
-    else {
-        //  Set default filtering to NEAREST
-        tex.setMagFilter(GL_NEAREST);
-        tex.setMinFilter(GL_NEAREST);
-        tex.setWrapS(GL_CLAMP_TO_EDGE);
-        tex.setWrapT(GL_CLAMP_TO_EDGE);
 
-        Log("Texture %s loaded id %d", name.c_str(), tex.getId());
-    }
     mTextures[name] = tex;
-
-    return success;
+    return true;
 }
+
+bool ResourceManager::acquireTexture(string name)
+{
+    CachedTexture& ct = mTextures[name];
+
+    if (!ct.active) {
+        Texture tex(bluegin::getTextureAsset(ct.source.c_str()));
+        if (!tex) {
+            Log("Error acquiring texture '%s' from path %s", name.c_str(), ct.source.c_str());
+            ct.texture = Texture();
+            return false;
+        }
+        else {
+            //  Set default filtering to NEAREST
+            tex.setMagFilter(mMagFilter);
+            tex.setMinFilter(mMinFilter);
+
+            tex.setWrapS(GL_CLAMP_TO_EDGE);
+            tex.setWrapT(GL_CLAMP_TO_EDGE);
+
+            ct.active = true;
+            ct.texture = tex;
+            Log("Texture %s loaded to GL id %d", name.c_str(), tex.getId());
+        }
+    }
+    return true;
+}
+
+void ResourceManager::acquireAllTextures(bool updateGraphics)
+{
+    for (map<string, CachedTexture>::iterator it=mTextures.begin();
+         it != mTextures.end(); ++it) {
+        Log("Acquiring texture %s", (it->first).c_str());
+        acquireTexture(it->first);
+    }
+
+    if (updateGraphics)
+        this->updateGraphics();
+}
+
+void ResourceManager::releaseTexture(string texName)
+{
+    CachedTexture& ct = mTextures[texName];
+    if (ct.active) {
+        // XXX we manually release the texture here, this invalidates
+        // any already held references to the texture (e.g. Graphic classes)
+        ct.active = false;
+        GLuint texId = ct.texture.getId();
+        glDeleteTextures(1, &texId);
+        Log("Released texture %s", texName.c_str());
+    }
+}
+
+void ResourceManager::updateGraphics()
+{
+    for (map<string, Graphic>::iterator it=mGraphics.begin(); it != mGraphics.end(); ++it) {
+        Graphic& gr = it->second;
+        map<string, CachedTexture>::iterator cit = mTextures.find(gr.texName);
+        if (cit == mTextures.end()) {
+            Log("updateGraphics error: unable to find texture '%s' referenced by a Graphic", gr.texName.c_str());
+        }
+        else {
+            CachedTexture& tex = cit->second;
+            if (tex.active) {
+                Log("updating a Graphic bound to %s", gr.texName.c_str());
+                gr.setTexture(tex.texture);
+            }
+        }
+    }
+}
+
+// bool ResourceManager::loadTexture(ResourceConfig& rc)
+// {
+//     bool success = true;
+//     string name = rc.name;
+//     string texturePath;
+// 
+//     //  Read key values
+//     for (vector<KeyValue>::iterator it = rc.keyValues.begin();
+//                                     it != rc.keyValues.end(); ++it) {
+//         KeyValue& kv = *it;
+//         if (kv.key.compare("source") == 0) {
+//             texturePath = kv.getString();
+//         }
+//     }
+// 
+//     if (texturePath.empty()) {
+//         Log("Error: Empty texture path for texture '%s'", name.c_str());
+//         success = false;
+//     }
+//     Texture tex(bluegin::getTextureAsset(texturePath.c_str()));
+//     if (!tex) {
+//         Log("Error loading texture '%s' from path %s", name.c_str(), texturePath.c_str());
+//         success = false;
+//     }
+//     else {
+//         //  Set default filtering to NEAREST
+//         tex.setMagFilter(GL_NEAREST);
+//         tex.setMinFilter(GL_NEAREST);
+//         tex.setWrapS(GL_CLAMP_TO_EDGE);
+//         tex.setWrapT(GL_CLAMP_TO_EDGE);
+// 
+//         Log("Texture %s loaded id %d", name.c_str(), tex.getId());
+//     }
+//     mTextures[name] = tex;
+// 
+//     return success;
+// }
 
 bool ResourceManager::loadGraphic(ResourceConfig& rc)
 {
@@ -78,7 +176,8 @@ bool ResourceManager::loadGraphic(ResourceConfig& rc)
         }
     }
 
-    Graphic graphic(texture(texName), sourceRect);
+    //  create graphic, not bound to a texture
+    Graphic graphic(texName, sourceRect);
     mGraphics[name] = graphic;
 
     return success;
@@ -89,7 +188,7 @@ bool ResourceManager::loadFont(ResourceConfig& rc)
     bool success = true;
     string name = rc.name;
     string source;
-    string texture;
+    string texName;
 
     //  Read key values
     for (vector<KeyValue>::iterator it = rc.keyValues.begin();
@@ -99,7 +198,7 @@ bool ResourceManager::loadFont(ResourceConfig& rc)
             source = kv.getString();
         }
         else if (kv.key.compare("texture") == 0) {
-            texture = kv.getString();
+            texName = kv.getString();
         }
     }
 
@@ -107,23 +206,23 @@ bool ResourceManager::loadFont(ResourceConfig& rc)
         Log("Error: Empty source file for font '%s'", name.c_str());
         success = false;
     }
-    if (texture.empty()) {
+    if (texName.empty()) {
         Log("Error: Empty texture referenced by font '%s'", name.c_str());
         success = false;
     }
-    Texture tex = this->texture(texture);
+
+    //  TODO lazy-load font texture references instead of acquiring them upfront
+    acquireTexture(texName);
+    Texture tex = this->texture(texName);
+
     if (!tex) {
         Log("Error: unable to resolve texture reference in font %s", name.c_str());
         success = false;
     }
-    else {
-        //tex.setMagFilter(GL_LINEAR);
-        //tex.setMinFilter(GL_LINEAR);
-    }
 
     mFonts[name] = shared_ptr<hgeFont>(new hgeFont(source.c_str(), tex));
     if (success) {
-        Log("Loaded font %s texture %s", source.c_str(), texture.c_str());
+        Log("Loaded font %s texture %s", source.c_str(), texName.c_str());
     }
     return success;
 }
@@ -186,7 +285,7 @@ void ResourceManager::loadResourceConfig(const char* configPath)
         }
     }
 
-    //  Load graphic resources after textures so width and height information is correctly processed
+    //  Load font resources after textures so width and height information is correctly processed
     for (vector<ResourceConfig*>::iterator it=resources.begin(); it != resources.end(); ++it) {
         ResourceConfig& rc = **it;
         if (rc.resourceType == GRAPHIC) {
@@ -206,12 +305,16 @@ void ResourceManager::loadResourceConfig(const char* configPath)
 
 Texture ResourceManager::texture(string texName)
 {
-    map<string, Texture>::iterator it = mTextures.find(texName);
+    map<string, CachedTexture>::iterator it = mTextures.find(texName);
     if (it == mTextures.end()) {
         Log("Error accessing non-existent texture '%s' - returned empty", texName.c_str());
         return Texture();
     }
-    return it->second;
+    CachedTexture& tex = it->second;
+    if (tex.active == false) {
+        Log("Error: texture %s is not loaded into texture memory (forgot to acquireTexture?)", texName.c_str());
+    }
+    return (it->second).texture;
 }
 
 Graphic ResourceManager::graphic(string graphicName)
@@ -244,32 +347,30 @@ AudioSourcePtr ResourceManager::sound(string soundName)
     return it->second; 
 }
 
-//  Prime a sound for playback
-void ResourceManager::primeSound(AudioSourcePtr source)
+void ResourceManager::acquireSound(AudioSourcePtr source)
 {
     if (source->type == SOUND_TYPE && source->soundID == -1) {
         int soundID = bluegin_sound_load(source->path.c_str());
         source->soundID = soundID;
     }
     else if (source->soundID != -1) {
-        Log("primeSound called for already primed sound %s",
+        Log("acquireSound called for already acquired sound %s",
                 source->path.c_str());
     }
 }
 
-//  Prime all the loaded sounds for playback
-void ResourceManager::primeAllSounds()
+void ResourceManager::acquireAllSounds()
 {
     for (map<string, AudioSourcePtr>::iterator it = mSounds.begin();
             it != mSounds.end(); ++it) {
         AudioSourcePtr source = it->second;
         if (source->type == SOUND_TYPE && source->soundID == -1) {
-            primeSound(source);
+            acquireSound(source);
         }
     }
 }
 
-void ResourceManager::resetSounds()
+void ResourceManager::releaseAllSounds()
 {
     for (map<string, AudioSourcePtr>::iterator it = mSounds.begin();
             it != mSounds.end(); ++it) {

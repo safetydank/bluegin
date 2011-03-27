@@ -29,7 +29,7 @@ cinder::gl::Texture getTextureAsset(const char* name)
     if (texID == 0 || width == 0 || height == 0) {
         return Texture();
     }
-    return Texture(GL_TEXTURE_2D, texID, width, height, false);
+    return Texture(GL_TEXTURE_2D, texID, width, height, true);
 #else
     //  load from assets folder
     DataSourcePathRef path  = DataSourcePath::createRef(string("assets\\")+string(name));

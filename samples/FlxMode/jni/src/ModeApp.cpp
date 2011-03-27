@@ -29,8 +29,13 @@ public:
                                  initialState, zoom));
         flxSetup(mGame);
 
-        FlxG.resources->primeAllSounds();
+        //  Load all configured textures and sounds
+        FlxG.resources->acquireAllTextures();
+        FlxG.resources->acquireAllSounds();
+
+        //  Set default font
         FlxG.defaultFont = FlxG.resources->font("nokia").get();
+
         gl::clear();
     }
 };

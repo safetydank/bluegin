@@ -9,27 +9,58 @@ Graphic::Graphic() : mSourceRect(0,0,0,0), mTexRect(0,0,0,0)
 {
 }
 
-Graphic::Graphic(Texture texture, Rectf sourceRect) :
-    mSourceRect(0,0,0,0), mTexRect(0,0,0,0), mTexture(texture)
+Graphic::Graphic(string texName, Rectf sourceRect) :
+    texName(texName), mSourceRect(sourceRect), mTexRect(0,0,0,0)
 {
-    if (!texture) {
-        Log("Error: empty texture passed to Graphic, not initialized");
-        return;
+}
+
+void Graphic::setTexture(ci::gl::Texture& tex)
+{
+    Rectf& src = mSourceRect;
+
+    if (!tex) {
+        Log("Error: call to Graphic::setTexture with empty texture");
+    }
+    else {
+        mTexture = tex;
     }
 
-    Rectf& src = sourceRect;
     if (src.x1 == 0 && src.x2 == 0 && src.y1 == 0 && src.y2 == 0) {
-        //  Use entire texture
-        mSourceRect.set(0, 0, texture.getWidth(), texture.getHeight());
+        //  No source rect specified and first time texture is read,
+        //  so use entire texture
+        src.set(0, 0, tex.getWidth(), tex.getHeight());
         mTexRect.set(0, 0, 1.0f, 1.0f);
     } 
     else {
-        mSourceRect = sourceRect;
-        RectMapping sourceMap(Rectf(0, 0, texture.getWidth(), texture.getHeight()), 
+        RectMapping sourceMap(Rectf(0, 0, tex.getWidth(), tex.getHeight()), 
                               Rectf(0, 0, 1.0f, 1.0f));
-        mTexRect = sourceMap.map(sourceRect);
+        mTexRect = sourceMap.map(src);
     }
+    Log("Graphic::setTexture texRect (%f, %f), (%f, %f)", mTexRect.x1, mTexRect.y1,
+            mTexRect.x2, mTexRect.y2);
 }
+
+// Graphic::Graphic(Texture texture, Rectf sourceRect) :
+//     mSourceRect(0,0,0,0), mTexRect(0,0,0,0), mTexture(texture)
+// {
+//     if (!texture) {
+//         Log("Error: empty texture passed to Graphic, not initialized");
+//         return;
+//     }
+// 
+//     Rectf& src = sourceRect;
+//     if (src.x1 == 0 && src.x2 == 0 && src.y1 == 0 && src.y2 == 0) {
+//         //  Use entire texture
+//         mSourceRect.set(0, 0, texture.getWidth(), texture.getHeight());
+//         mTexRect.set(0, 0, 1.0f, 1.0f);
+//     } 
+//     else {
+//         mSourceRect = sourceRect;
+//         RectMapping sourceMap(Rectf(0, 0, texture.getWidth(), texture.getHeight()), 
+//                               Rectf(0, 0, 1.0f, 1.0f));
+//         mTexRect = sourceMap.map(sourceRect);
+//     }
+// }
 
 Graphic::~Graphic()
 {
