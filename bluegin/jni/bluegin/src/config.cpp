@@ -1,5 +1,5 @@
 
-#line 1 "jni/src/bluegin/config.rl"
+#line 1 "config.rl"
 // a resources config file reader implemented with Ragel
 //
 // config files are of the form:
@@ -26,6 +26,12 @@
 //     texture = font_a
 //     source  = font_a.fnt
 // }
+// Sound sound1 {
+//     source = sound1.wav
+// }
+// Music music1 {
+//     source = music1.mp3
+// }
 
 
 #ifdef TEST_RESOURCE_CONFIG_MAIN
@@ -43,7 +49,7 @@ using std::vector;
 namespace bluegin {
 
 
-#line 47 "jni/src/bluegin/config.cpp"
+#line 53 "config.c"
 static const char _resparser_actions[] = {
 	0, 1, 1, 1, 2, 1, 3, 1, 
 	6, 1, 7, 1, 8, 1, 9, 1, 
@@ -56,55 +62,49 @@ static const char _resparser_actions[] = {
 };
 
 static const short _resparser_key_offsets[] = {
-	0, 0, 1, 2, 11, 21, 31, 41, 
-	51, 61, 62, 63, 72, 73, 75, 84, 
-	101, 102, 111, 121, 131, 141, 151, 161, 
-	171, 181, 191, 201, 211, 221, 231, 241, 
-	251, 261, 271, 284, 285, 294, 305, 308, 
-	310
+	0, 0, 1, 2, 9, 17, 25, 33, 
+	41, 49, 50, 51, 58, 59, 61, 68, 
+	85, 86, 93, 101, 109, 117, 125, 133, 
+	141, 149, 157, 165, 173, 181, 189, 197, 
+	205, 213, 221, 234, 235, 242, 253, 256, 
+	258
 };
 
 static const char _resparser_trans_keys[] = {
-	47, 10, 95, 45, 46, 48, 57, 65, 
-	90, 97, 122, 95, 111, 45, 46, 48, 
-	57, 65, 90, 97, 122, 95, 114, 45, 
-	46, 48, 57, 65, 90, 97, 122, 95, 
-	117, 45, 46, 48, 57, 65, 90, 97, 
-	122, 95, 111, 45, 46, 48, 57, 65, 
-	90, 97, 122, 95, 101, 45, 46, 48, 
-	57, 65, 90, 97, 122, 47, 10, 95, 
-	45, 46, 48, 57, 65, 90, 97, 122, 
-	10, 48, 57, 95, 45, 46, 48, 57, 
+	47, 10, 95, 45, 57, 65, 90, 97, 
+	122, 95, 111, 45, 57, 65, 90, 97, 
+	122, 95, 114, 45, 57, 65, 90, 97, 
+	122, 95, 117, 45, 57, 65, 90, 97, 
+	122, 95, 111, 45, 57, 65, 90, 97, 
+	122, 95, 101, 45, 57, 65, 90, 97, 
+	122, 47, 10, 95, 45, 57, 65, 90, 
+	97, 122, 10, 48, 57, 95, 45, 57, 
 	65, 90, 97, 122, 10, 13, 32, 47, 
 	70, 71, 77, 83, 84, 95, 123, 9, 
 	12, 65, 90, 97, 122, 10, 95, 45, 
-	46, 48, 57, 65, 90, 97, 122, 95, 
-	110, 45, 46, 48, 57, 65, 90, 97, 
-	122, 95, 116, 45, 46, 48, 57, 65, 
-	90, 97, 122, 95, 97, 45, 46, 48, 
+	57, 65, 90, 97, 122, 95, 110, 45, 
+	57, 65, 90, 97, 122, 95, 116, 45, 
+	57, 65, 90, 97, 122, 95, 97, 45, 
 	57, 65, 90, 98, 122, 95, 112, 45, 
-	46, 48, 57, 65, 90, 97, 122, 95, 
-	104, 45, 46, 48, 57, 65, 90, 97, 
-	122, 95, 105, 45, 46, 48, 57, 65, 
-	90, 97, 122, 95, 99, 45, 46, 48, 
+	57, 65, 90, 97, 122, 95, 104, 45, 
+	57, 65, 90, 97, 122, 95, 105, 45, 
+	57, 65, 90, 97, 122, 95, 99, 45, 
 	57, 65, 90, 97, 122, 95, 115, 45, 
-	46, 48, 57, 65, 90, 97, 122, 95, 
-	117, 45, 46, 48, 57, 65, 90, 97, 
-	122, 95, 110, 45, 46, 48, 57, 65, 
-	90, 97, 122, 95, 100, 45, 46, 48, 
+	57, 65, 90, 97, 122, 95, 117, 45, 
+	57, 65, 90, 97, 122, 95, 110, 45, 
+	57, 65, 90, 97, 122, 95, 100, 45, 
 	57, 65, 90, 97, 122, 95, 120, 45, 
-	46, 48, 57, 65, 90, 97, 122, 95, 
-	116, 45, 46, 48, 57, 65, 90, 97, 
-	122, 95, 117, 45, 46, 48, 57, 65, 
-	90, 97, 122, 95, 114, 45, 46, 48, 
+	57, 65, 90, 97, 122, 95, 116, 45, 
+	57, 65, 90, 97, 122, 95, 117, 45, 
+	57, 65, 90, 97, 122, 95, 114, 45, 
 	57, 65, 90, 97, 122, 95, 101, 45, 
-	46, 48, 57, 65, 90, 97, 122, 10, 
-	13, 32, 47, 61, 95, 125, 9, 12, 
-	65, 90, 97, 122, 10, 95, 45, 46, 
-	48, 57, 65, 90, 97, 122, 9, 10, 
-	13, 32, 95, 48, 57, 65, 90, 97, 
-	122, 46, 48, 57, 48, 57, 95, 45, 
-	46, 48, 57, 65, 90, 97, 122, 0
+	57, 65, 90, 97, 122, 10, 13, 32, 
+	47, 61, 95, 125, 9, 12, 65, 90, 
+	97, 122, 10, 95, 45, 57, 65, 90, 
+	97, 122, 9, 10, 13, 32, 95, 48, 
+	57, 65, 90, 97, 122, 46, 48, 57, 
+	48, 57, 95, 45, 57, 65, 90, 97, 
+	122, 0
 };
 
 static const char _resparser_single_lengths[] = {
@@ -117,54 +117,51 @@ static const char _resparser_single_lengths[] = {
 };
 
 static const char _resparser_range_lengths[] = {
-	0, 0, 0, 4, 4, 4, 4, 4, 
-	4, 0, 0, 4, 0, 1, 4, 3, 
-	0, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 4, 4, 4, 4, 4, 4, 
-	4, 4, 3, 0, 4, 3, 1, 1, 
-	4
+	0, 0, 0, 3, 3, 3, 3, 3, 
+	3, 0, 0, 3, 0, 1, 3, 3, 
+	0, 3, 3, 3, 3, 3, 3, 3, 
+	3, 3, 3, 3, 3, 3, 3, 3, 
+	3, 3, 3, 0, 3, 3, 1, 1, 
+	3
 };
 
-static const short _resparser_index_offsets[] = {
-	0, 0, 2, 4, 10, 17, 24, 31, 
-	38, 45, 47, 49, 55, 57, 59, 65, 
-	80, 82, 88, 95, 102, 109, 116, 123, 
-	130, 137, 144, 151, 158, 165, 172, 179, 
-	186, 193, 200, 211, 213, 219, 228, 231, 
-	233
+static const unsigned char _resparser_index_offsets[] = {
+	0, 0, 2, 4, 9, 15, 21, 27, 
+	33, 39, 41, 43, 48, 50, 52, 57, 
+	72, 74, 79, 85, 91, 97, 103, 109, 
+	115, 121, 127, 133, 139, 145, 151, 157, 
+	163, 169, 175, 186, 188, 193, 202, 205, 
+	207
 };
 
 static const char _resparser_indicies[] = {
 	0, 1, 2, 0, 3, 3, 3, 3, 
-	3, 1, 3, 4, 3, 3, 3, 3, 
-	1, 3, 5, 3, 3, 3, 3, 1, 
-	3, 6, 3, 3, 3, 3, 1, 3, 
-	7, 3, 3, 3, 3, 1, 3, 8, 
-	3, 3, 3, 3, 1, 9, 1, 10, 
-	9, 11, 11, 11, 11, 11, 1, 12, 
-	1, 14, 13, 15, 15, 15, 15, 15, 
+	1, 3, 4, 3, 3, 3, 1, 3, 
+	5, 3, 3, 3, 1, 3, 6, 3, 
+	3, 3, 1, 3, 7, 3, 3, 3, 
+	1, 3, 8, 3, 3, 3, 1, 9, 
+	1, 10, 9, 11, 11, 11, 11, 1, 
+	12, 1, 14, 13, 15, 15, 15, 15, 
 	1, 17, 18, 16, 19, 21, 22, 23, 
 	24, 25, 20, 26, 16, 20, 20, 1, 
-	28, 27, 3, 3, 3, 3, 3, 29, 
-	3, 31, 3, 3, 3, 3, 30, 3, 
-	32, 3, 3, 3, 3, 30, 3, 33, 
-	3, 3, 3, 3, 30, 3, 34, 3, 
-	3, 3, 3, 30, 3, 35, 3, 3, 
-	3, 3, 30, 3, 36, 3, 3, 3, 
-	3, 30, 3, 32, 3, 3, 3, 3, 
-	30, 3, 35, 3, 3, 3, 3, 30, 
-	3, 37, 3, 3, 3, 3, 30, 3, 
-	38, 3, 3, 3, 3, 30, 3, 32, 
-	3, 3, 3, 3, 30, 3, 39, 3, 
-	3, 3, 3, 30, 3, 40, 3, 3, 
-	3, 3, 30, 3, 41, 3, 3, 3, 
-	3, 30, 3, 42, 3, 3, 3, 3, 
-	30, 3, 32, 3, 3, 3, 3, 30, 
-	44, 45, 43, 46, 47, 48, 49, 43, 
-	48, 48, 1, 51, 50, 11, 11, 11, 
-	11, 11, 52, 53, 54, 55, 53, 57, 
-	56, 57, 57, 1, 59, 56, 58, 14, 
-	58, 15, 15, 15, 15, 15, 60, 0
+	28, 27, 3, 3, 3, 3, 29, 3, 
+	31, 3, 3, 3, 30, 3, 32, 3, 
+	3, 3, 30, 3, 33, 3, 3, 3, 
+	30, 3, 34, 3, 3, 3, 30, 3, 
+	35, 3, 3, 3, 30, 3, 36, 3, 
+	3, 3, 30, 3, 32, 3, 3, 3, 
+	30, 3, 35, 3, 3, 3, 30, 3, 
+	37, 3, 3, 3, 30, 3, 38, 3, 
+	3, 3, 30, 3, 32, 3, 3, 3, 
+	30, 3, 39, 3, 3, 3, 30, 3, 
+	40, 3, 3, 3, 30, 3, 41, 3, 
+	3, 3, 30, 3, 42, 3, 3, 3, 
+	30, 3, 32, 3, 3, 3, 30, 44, 
+	45, 43, 46, 47, 48, 49, 43, 48, 
+	48, 1, 51, 50, 11, 11, 11, 11, 
+	52, 53, 54, 55, 53, 57, 56, 57, 
+	57, 1, 59, 56, 58, 14, 58, 15, 
+	15, 15, 15, 60, 0
 };
 
 static const char _resparser_trans_targs[] = {
@@ -207,7 +204,7 @@ static const char _resparser_from_state_actions[] = {
 	0
 };
 
-static const short _resparser_eof_trans[] = {
+static const unsigned char _resparser_eof_trans[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 14, 0, 0, 
 	28, 30, 31, 31, 31, 31, 31, 31, 
@@ -225,7 +222,7 @@ static const int resparser_en_resource = 34;
 static const int resparser_en_kvalue = 37;
 
 
-#line 46 "jni/src/bluegin/config.rl"
+#line 52 "config.rl"
 
 
 char* getToken(char* buf, char* ts, char* te)
@@ -274,7 +271,7 @@ bool resourceConfigParse(char* str, int length, vector<ResourceConfig*>& resourc
     ResourceConfig* resourceConfig = NULL;
 
 
-#line 278 "jni/src/bluegin/config.cpp"
+#line 275 "config.c"
 	{
 	cs = resparser_start;
 	top = 0;
@@ -283,7 +280,7 @@ bool resourceConfigParse(char* str, int length, vector<ResourceConfig*>& resourc
 	act = 0;
 	}
 
-#line 287 "jni/src/bluegin/config.cpp"
+#line 284 "config.c"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -304,7 +301,7 @@ _resume:
 #line 1 "NONE"
 	{ts = p;}
 	break;
-#line 308 "jni/src/bluegin/config.cpp"
+#line 305 "config.c"
 		}
 	}
 
@@ -371,7 +368,7 @@ _eof_trans:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 94 "jni/src/bluegin/config.rl"
+#line 100 "config.rl"
 	{ curLine += 1; }
 	break;
 	case 3:
@@ -379,27 +376,27 @@ _eof_trans:
 	{te = p+1;}
 	break;
 	case 4:
-#line 109 "jni/src/bluegin/config.rl"
+#line 115 "config.rl"
 	{act = 4;}
 	break;
 	case 5:
-#line 113 "jni/src/bluegin/config.rl"
+#line 119 "config.rl"
 	{act = 5;}
 	break;
 	case 6:
-#line 106 "jni/src/bluegin/config.rl"
+#line 112 "config.rl"
 	{te = p+1;{ ++curLine; }}
 	break;
 	case 7:
-#line 107 "jni/src/bluegin/config.rl"
+#line 113 "config.rl"
 	{te = p+1;{ ++curLine; }}
 	break;
 	case 8:
-#line 108 "jni/src/bluegin/config.rl"
+#line 114 "config.rl"
 	{te = p+1;}
 	break;
 	case 9:
-#line 120 "jni/src/bluegin/config.rl"
+#line 126 "config.rl"
 	{te = p+1;{ 
             if (resourceConfig == NULL) {
                 Log("Error: block started without a resource declaration");
@@ -410,11 +407,11 @@ _eof_trans:
         }}
 	break;
 	case 10:
-#line 108 "jni/src/bluegin/config.rl"
+#line 114 "config.rl"
 	{te = p;p--;}
 	break;
 	case 11:
-#line 113 "jni/src/bluegin/config.rl"
+#line 119 "config.rl"
 	{te = p;p--;{ 
             if (resourceConfig == NULL) {
                 Log("Error: resource config not declared before resource name");
@@ -445,19 +442,19 @@ _eof_trans:
 	}
 	break;
 	case 13:
-#line 131 "jni/src/bluegin/config.rl"
+#line 137 "config.rl"
 	{te = p+1;{ ++curLine; }}
 	break;
 	case 14:
-#line 132 "jni/src/bluegin/config.rl"
+#line 138 "config.rl"
 	{te = p+1;{ ++curLine; }}
 	break;
 	case 15:
-#line 133 "jni/src/bluegin/config.rl"
+#line 139 "config.rl"
 	{te = p+1;}
 	break;
 	case 16:
-#line 137 "jni/src/bluegin/config.rl"
+#line 143 "config.rl"
 	{te = p+1;{ 
             if (keyValue.key.empty()) {
                 Log("Error: no key name specified before = (L%d)\n", curLine);
@@ -467,7 +464,7 @@ _eof_trans:
         }}
 	break;
 	case 17:
-#line 144 "jni/src/bluegin/config.rl"
+#line 150 "config.rl"
 	{te = p+1;{ 
             resources.push_back(resourceConfig);
             Log("Added resource %s with %d keyvalues\n", 
@@ -478,21 +475,21 @@ _eof_trans:
         }}
 	break;
 	case 18:
-#line 133 "jni/src/bluegin/config.rl"
+#line 139 "config.rl"
 	{te = p;p--;}
 	break;
 	case 19:
-#line 134 "jni/src/bluegin/config.rl"
+#line 140 "config.rl"
 	{te = p;p--;{
             keyValue.key = string(getToken(token, ts, te));
         }}
 	break;
 	case 20:
-#line 155 "jni/src/bluegin/config.rl"
+#line 161 "config.rl"
 	{te = p+1;}
 	break;
 	case 21:
-#line 163 "jni/src/bluegin/config.rl"
+#line 169 "config.rl"
 	{te = p+1;{
             resourceConfig->keyValues.push_back(keyValue);
             keyValue.reset();
@@ -501,26 +498,26 @@ _eof_trans:
         }}
 	break;
 	case 22:
-#line 156 "jni/src/bluegin/config.rl"
+#line 162 "config.rl"
 	{te = p;p--;{
             keyValue.strval.push_back(string(getToken(token, ts, te)));
         }}
 	break;
 	case 23:
-#line 159 "jni/src/bluegin/config.rl"
+#line 165 "config.rl"
 	{te = p;p--;{ 
             float numToken = atof(getToken(token, ts, te));
             keyValue.numval.push_back(numToken);
         }}
 	break;
 	case 24:
-#line 159 "jni/src/bluegin/config.rl"
+#line 165 "config.rl"
 	{{p = ((te))-1;}{ 
             float numToken = atof(getToken(token, ts, te));
             keyValue.numval.push_back(numToken);
         }}
 	break;
-#line 524 "jni/src/bluegin/config.cpp"
+#line 521 "config.c"
 		}
 	}
 
@@ -533,7 +530,7 @@ _again:
 #line 1 "NONE"
 	{ts = 0;}
 	break;
-#line 537 "jni/src/bluegin/config.cpp"
+#line 534 "config.c"
 		}
 	}
 
@@ -553,7 +550,7 @@ _again:
 	_out: {}
 	}
 
-#line 173 "jni/src/bluegin/config.rl"
+#line 179 "config.rl"
 
 
 Finished:

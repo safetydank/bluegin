@@ -101,7 +101,7 @@ bool resourceConfigParse(char* str, int length, vector<ResourceConfig*>& resourc
      ws          = space+ ;
      tabspace    = [ \t] ;
      rctype      = "Texture" | "Graphic" | "Font" | "Sound" | "Music" ;
-     string      = [A-Za-z_](alnum | [_.\-])+ ;
+     string      = [A-Za-z_](alnum | [/_.\-])+ ;
      number      = digit+ '.' digit+ | digit+ ;
      eq          = "=" ;
      key         = string ;
