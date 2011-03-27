@@ -115,44 +115,6 @@ void ResourceManager::updateGraphics()
     }
 }
 
-// bool ResourceManager::loadTexture(ResourceConfig& rc)
-// {
-//     bool success = true;
-//     string name = rc.name;
-//     string texturePath;
-// 
-//     //  Read key values
-//     for (vector<KeyValue>::iterator it = rc.keyValues.begin();
-//                                     it != rc.keyValues.end(); ++it) {
-//         KeyValue& kv = *it;
-//         if (kv.key.compare("source") == 0) {
-//             texturePath = kv.getString();
-//         }
-//     }
-// 
-//     if (texturePath.empty()) {
-//         Log("Error: Empty texture path for texture '%s'", name.c_str());
-//         success = false;
-//     }
-//     Texture tex(bluegin::getTextureAsset(texturePath.c_str()));
-//     if (!tex) {
-//         Log("Error loading texture '%s' from path %s", name.c_str(), texturePath.c_str());
-//         success = false;
-//     }
-//     else {
-//         //  Set default filtering to NEAREST
-//         tex.setMagFilter(GL_NEAREST);
-//         tex.setMinFilter(GL_NEAREST);
-//         tex.setWrapS(GL_CLAMP_TO_EDGE);
-//         tex.setWrapT(GL_CLAMP_TO_EDGE);
-// 
-//         Log("Texture %s loaded id %d", name.c_str(), tex.getId());
-//     }
-//     mTextures[name] = tex;
-// 
-//     return success;
-// }
-
 bool ResourceManager::loadGraphic(ResourceConfig& rc)
 {
     bool success = true;
