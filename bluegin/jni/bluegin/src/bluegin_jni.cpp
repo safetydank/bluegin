@@ -4,8 +4,6 @@
 #include "bluegin/android.h"
 #include "bluegin/app.h"
 
-float gTime = 0;
-
 // XXX is there a better way to get/retain the jni env
 JNIEnv* _my_jnienv = 0;
 void set_jnienv(JNIEnv* env) { _my_jnienv = env; }
