@@ -4,6 +4,7 @@
 
 #include "cinder/app/AccelEvent.h"
 #include "cinder/app/TouchEvent.h"
+#include "cinder/app/KeyEvent.h"
 #include "cinder/app/ResizeEvent.h"
 
 #ifndef ANDROID
@@ -26,8 +27,11 @@ public:
     virtual void touchesBegan(ci::app::TouchEvent event) { }
     virtual void touchesMoved(ci::app::TouchEvent event) { }
     virtual void touchesEnded(ci::app::TouchEvent event) { }
-    void addTouchEvent(int eventType, float x, float y, float px, float py, int id);
-    void doTouch();
+
+    virtual void keyDown(ci::app::KeyEvent event) { }
+    virtual void keyUp(ci::app::KeyEvent event) { }
+
+    void doTouch();             // emulate touch from mouse input
     void doPause();
     void doAccelerated(float x, float y, float z);
 
@@ -35,6 +39,9 @@ public:
     void mouseMove(ci::app::MouseEvent event);
     void mouseDrag(ci::app::MouseEvent event);
     void mouseUp(ci::app::MouseEvent event);
+
+    void addTouchEvent(int eventType, float x, float y, float px, float py, int id);
+    void addKeyEvent(bool keyDown, char aChar, unsigned int aModifiers, unsigned int aNativeKeyCode);
 
 private:
     ci::Vec3f mAccelData;
@@ -44,8 +51,12 @@ private:
     std::vector<ci::app::TouchEvent::Touch> mTouchesBegan;
     std::vector<ci::app::TouchEvent::Touch> mTouchesMoved;
     std::vector<ci::app::TouchEvent::Touch> mTouchesEnded;
+
+    //  Key events
+    std::vector<ci::app::KeyEvent> mKeyEvents;
 };
-}
+
+} // namespace
 
 #else
 
@@ -71,6 +82,9 @@ public:
     virtual void touchesMoved(ci::app::TouchEvent event) { }
     virtual void touchesEnded(ci::app::TouchEvent event) { }
 
+    virtual void keyDown(ci::app::KeyEvent event) { }
+    virtual void keyUp(ci::app::KeyEvent event) { }
+
     float getWindowAspectRatio();
     int   getWindowWidth();
     int   getWindowHeight();
@@ -87,11 +101,13 @@ public:
     void doResize(int width, int height);
     void doAccelerated(float x, float y, float z);
     void doPause();
+    void doTouch();
+    void doKeys();
 
     inline double getDT() { return mDT / 1000.0; }
 
     void addTouchEvent(int eventType, float x, float y, float px, float py, int id);
-    void doTouch();
+    void addKeyEvent(bool keyDown, char aChar, unsigned int aModifiers, unsigned int aNativeKeyCode);
 
 private:
     long mElapsed;
@@ -105,15 +121,20 @@ private:
     std::vector<ci::app::TouchEvent::Touch> mTouchesBegan;
     std::vector<ci::app::TouchEvent::Touch> mTouchesMoved;
     std::vector<ci::app::TouchEvent::Touch> mTouchesEnded;
+
+    //  Key events
+    std::vector<ci::app::KeyEvent> mKeyDownEvents;
+    std::vector<ci::app::KeyEvent> mKeyUpEvents;
 };
 
+} // namespace bluegin
+
+//  App macro
 #define BLUEGIN_APP( APP )         \
 bluegin::BlueginApp* theApp__ = 0; \
 void nativeCreate() {              \
     theApp__ = new APP;            \
 }
-
-} // namespace bluegin
 
 //  CINDER_APP_BASIC compatibility shim 
 namespace cinder { namespace app {
@@ -122,3 +143,4 @@ typedef bool RendererGl;
 #define CINDER_APP_BASIC( APP, X ) BLUEGIN_APP( APP )
 
 #endif
+

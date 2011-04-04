@@ -10,7 +10,7 @@ void set_jnienv(JNIEnv* env) { _my_jnienv = env; }
 JNIEnv* get_jnienv() 
 { 
     if (!_my_jnienv) {
-        Log("Error: no jnienv set, check order of init");
+        Log("Error: no jnienv set, check order of initialization");
     }
     return _my_jnienv; 
 }
@@ -87,9 +87,20 @@ JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_addTouchEvent(JNIEnv* env,
     theApp__->addTouchEvent(eventType, x, y, px, py, id);
 }
 
+JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_addKeyEvent(JNIEnv* env,
+    jobject thiz, bool keyDown, int unicode, int modifiers, int keycode)
+{
+    theApp__->addKeyEvent(keyDown, (char) (unicode & 0xff), modifiers, keycode);
+}
+
 JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_setTouches(JNIEnv* env)
 {
     theApp__->doTouch();
+}
+
+JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_setKeys(JNIEnv* env)
+{
+    theApp__->doKeys();
 }
 
 JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_setAccelerometer(JNIEnv* env,
@@ -97,3 +108,4 @@ JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_setAccelerometer(JNIEnv* env
 {
     theApp__->doAccelerated(x, y, z);              
 }
+

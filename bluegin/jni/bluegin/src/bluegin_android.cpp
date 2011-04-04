@@ -4,6 +4,8 @@
 static jmethodID MID_LOAD_TEXTURE;
 static jmethodID MID_LOAD_RESOURCE;
 
+static jmethodID MID_KEYBOARD_TOGGLE;
+
 static jmethodID MID_MUSIC_PLAY;
 static jmethodID MID_MUSIC_STOP;
 static jmethodID MID_MUSIC_IS_PLAYING;
@@ -34,6 +36,9 @@ void cache_method_ids(JNIEnv* env)
     MID_LOAD_RESOURCE = env->GetStaticMethodID(jBlueGin,
 	       "load_resource",
 	       "(Ljava/lang/String;)[B");
+    MID_KEYBOARD_TOGGLE = env->GetStaticMethodID(jBlueGin,
+            "keyboard_toggle",
+            "(Z)V");
     MID_MUSIC_PLAY = env->GetStaticMethodID(jBlueGin,
 	       "music_play",
 	       "(Ljava/lang/String;)V");
@@ -88,7 +93,7 @@ int bluegin_load_texture(const char *s, int* width, int* height)
     int ndim[2];
     env->GetIntArrayRegion(dim, 0, 2, ndim);
     *width = ndim[0]; *height = ndim[1];
-    // Log("bluegin_load_texture: received dims %d %d", *width, *height);
+    Log("bluegin_load_texture: received dims %d %d", *width, *height);
     
     return ret;
 }
@@ -115,6 +120,12 @@ void* bluegin_load_resource(const char *s, int* size)
     //  add NUL terminator
     ret[len] = '\0';
     return static_cast<void*>(ret);
+}
+
+void bluegin_keyboard_toggle(bool show)
+{
+    JNIEnv *env = get_jnienv();
+    env->CallStaticVoidMethod(jBlueGin, MID_KEYBOARD_TOGGLE, (jboolean) show);
 }
 
 void bluegin_music_play(const char* fname)

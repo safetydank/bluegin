@@ -4,19 +4,18 @@ import android.util.Log;
 
 import android.content.res.AssetManager;
 import android.content.res.AssetFileDescriptor;
+import android.content.Context;
 
-import android.content.res.AssetManager;
-import android.content.res.AssetFileDescriptor;
+import android.view.inputmethod.InputMethodManager;
+
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
 import android.opengl.GLUtils;
-import android.opengl.GLES10;
 
 import java.io.File;
 import java.io.InputStream;
@@ -77,21 +76,36 @@ public class BlueGinAndroid
         }
     }
 
+    public static void keyboard_toggle(boolean show) 
+    {
+        BlueGinActivity app = BlueGinActivity.app;
+        InputMethodManager mgr = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(app.getView().getWindowToken(), 0);
+        if (show) {
+            mgr.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            // On the Nexus One, SHOW_FORCED makes it impossible
+            // to manually dismiss the keyboard.
+            // On the Droid SHOW_IMPLICIT doesn't bring up the keyboard.
+        }
+    }
+
     // JNI to play music, etc
     public static void music_play(String fname) 
     {
+        BlueGinActivity app = BlueGinActivity.app;
+
         Log.v("music_play",fname);
-        AssetManager am = BlueGinActivity.app.getAssets();
+        AssetManager am = app.getAssets();
         try {
             Log.v(TAG, "Playing music file: "+fname);
             AssetFileDescriptor fd = am.openFd(fname);
-            BlueGinActivity.app.mediaPlayer = new MediaPlayer();
-            BlueGinActivity.app.mediaPlayer.setDataSource(fd.getFileDescriptor(),
+            app.mediaPlayer = new MediaPlayer();
+            app.mediaPlayer.setDataSource(fd.getFileDescriptor(),
                     fd.getStartOffset(), fd.getLength());
             fd.close();
-            BlueGinActivity.app.mediaPlayer.setLooping(true);
-            BlueGinActivity.app.mediaPlayer.prepare();
-            BlueGinActivity.app.mediaPlayer.start();
+            app.mediaPlayer.setLooping(true);
+            app.mediaPlayer.prepare();
+            app.mediaPlayer.start();
         } catch(IOException e) { 
             Log.v(TAG, "Error playing music file: "+fname);
         }

@@ -10,9 +10,12 @@ public class Native
     public static native void cleanup();
     public static native void pause();
 
-    public static native void setScreenSize(int width, int height);
     public static native void addTouchEvent(int eventType, float x, float y, float px, float py, int id);
+    public static native void addKeyEvent(boolean keyDown, int unicode, int modifiers, int keycode);
+
+    public static native void setScreenSize(int width, int height);
     public static native void setTouches();
+    public static native void setKeys();
     public static native void setAccelerometer(float x, float y, float z);
 }
 

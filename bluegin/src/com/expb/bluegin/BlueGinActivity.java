@@ -2,8 +2,10 @@ package com.expb.bluegin;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.view.MotionEvent;
 import android.util.Log;
+
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import android.content.res.AssetManager;
 import android.content.res.AssetFileDescriptor;
@@ -14,8 +16,6 @@ import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-
-import android.os.SystemClock;
 
 import com.expb.bluegin.BlueGinView;
 import com.expb.bluegin.TouchEventHandler;
@@ -36,26 +36,42 @@ public class BlueGinActivity extends Activity
     private BlueGinInput      mInput;
     private TouchEventHandler mTouchHandler;
 
-    /** Called when the activity is first created. */
+    private boolean mKeyboardVisible = false;
+
+    /** Called when the activity is (re)started. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         app = this;
         super.onCreate(savedInstanceState);
-
-        initSoundPool();
-        mInput = new BlueGinInput(getApplication());
-        mTouchHandler = TouchEventHandler.create(mInput);
-        mView  = new BlueGinView(getApplication(), mInput);
-        setContentView(mView);
-
-        Native.create();
     }
 
     @Override
     public void onStart()
     {
         super.onStart();
+        initSoundPool();
+        mInput        = new BlueGinInput(getApplication());
+        mTouchHandler = TouchEventHandler.create(mInput);
+        mView         = new BlueGinView(getApplication(), mInput);
+        setContentView(mView);
+
+        Native.create();
+    }
+
+    public BlueGinView getView()
+    {
+        return mView;
+    }
+
+    public boolean getKeyboardVisible()
+    {
+        return mKeyboardVisible;
+    }
+
+    public void setKeyboardVisible(boolean on)
+    {
+        mKeyboardVisible = on;
     }
 
     @Override
@@ -78,6 +94,10 @@ public class BlueGinActivity extends Activity
     protected void onStop()
     {
         super.onStop();
+
+        Log.v(TAG, "onStop() called");
+        //  Force hide the keyboard if visible
+        BlueGinAndroid.keyboard_toggle(false);
 
         //  Stop and free any playing sounds
         BlueGinAndroid.music_stop();
@@ -103,6 +123,18 @@ public class BlueGinActivity extends Activity
         }
         return true;
     }
+
+    public synchronized boolean onKeyDown(int keycode, KeyEvent e) 
+    {
+        Log.v("keydown", Character.toString(Character.toChars(e.getUnicodeChar())[0]));
+        int unicodeChar = e.getUnicodeChar();
+        // XXX translate and send modifiers
+        mInput.addKeyEvent(true, unicodeChar, 0, keycode);
+
+        return true;
+    }
+
+    // XXX add implementation of onKeyUp for completeness
 
     public void resetSoundPool()
     {

@@ -117,6 +117,8 @@ namespace std {
 typedef boost::uint32_t index_t;
 #endif
 
+#include <string>
+
 /**
  * Load a named texture asset
  *
@@ -134,6 +136,11 @@ int   bluegin_load_texture(const char *s, int* width, int* height);
  * @param size pointer to an int that will store the resource length in bytes read
  */
 void* bluegin_load_resource(const char *s, int* size);
+
+/**
+ * Hide/show Android onscreen keyboard
+ */
+void  bluegin_keyboard_toggle(bool show);
 
 /**
  * Play a named music resource
@@ -212,6 +219,11 @@ void  bluegin_sound_pause(int streamID);
  * @param streamID a stream ID returned from bluegin_sound_play
  */
 void  bluegin_sound_resume(int streamID);
+
+/**
+ * Get internal document folder, for writing Save game data files
+ */
+std::string bluegin_get_docdir();
 
 using boost::shared_ptr;
 

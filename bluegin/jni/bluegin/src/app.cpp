@@ -129,6 +129,17 @@ void BlueginApp::addTouchEvent(int eventType, float x, float y, float px, float 
     }
 }
 
+void BlueginApp::addKeyEvent(bool keyDown, char aChar, unsigned int aModifiers, unsigned int aNativeKeyCode)
+{
+    // XXX translate keycode, modifiers too?
+    //
+    KeyEvent keyEvent(aNativeKeyCode, aChar, aModifiers, aNativeKeyCode);
+    if (keyDown)
+        mKeyDownEvents.push_back(keyEvent);
+    else
+        mKeyUpEvents.push_back(keyEvent);
+}
+
 void BlueginApp::doTouch()
 {
     if (!mTouchesBegan.empty()) {
@@ -142,6 +153,23 @@ void BlueginApp::doTouch()
     if (!mTouchesEnded.empty()) {
         touchesEnded(TouchEvent(mTouchesEnded));
         mTouchesEnded.clear();
+    }
+}
+
+void BlueginApp::doKeys()
+{
+    if (!mKeyDownEvents.empty()) {
+        for (vector<KeyEvent>::iterator it = mKeyDownEvents.begin(); it != mKeyDownEvents.end(); ++it) {
+            keyDown(*it);
+        }
+        mKeyDownEvents.clear();
+    }
+
+    if (!mKeyUpEvents.empty()) {
+        for (vector<KeyEvent>::iterator it = mKeyUpEvents.begin(); it != mKeyUpEvents.end(); ++it) {
+            keyUp(*it);
+        }
+        mKeyUpEvents.clear();
     }
 }
 

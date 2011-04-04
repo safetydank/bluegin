@@ -28,13 +28,38 @@ public class BlueGinInput
         }
     }
 
+    public class Key
+    {
+        public boolean keyDown;
+        public int unicode; 
+        public long modifiers;
+        public long keycode;
+
+        public Key(boolean keyDown, int unicode, long modifiers, long keycode) 
+        {
+            this.keyDown = keyDown;
+            this.unicode = unicode;
+            this.modifiers = modifiers;
+            this.keycode = keycode;
+        }
+    }
+
     private ArrayList mTouches = null;
+    private ArrayList mKeys    = null;
     private Accelerometer mAccel = null;
-    public Accelerometer getAccelerometer() { return mAccel; }
+    public  Accelerometer getAccelerometer() { return mAccel; }
+
+    //  Cinder key modifiers
+	private static int SHIFT_DOWN = 0x0008;
+	private static int ALT_DOWN	  = 0x0010;
+	private static int CTRL_DOWN  = 0x0020;
+	private static int META_DOWN  = 0x0040;
+	private static int ACCEL_DOWN = META_DOWN;
 
     public BlueGinInput(Context context)
     {
         mTouches = new ArrayList();
+        mKeys = new ArrayList();
         mAccel = new Accelerometer(context);
         mAccel.enable();
     }
@@ -52,6 +77,13 @@ public class BlueGinInput
         }
     }
 
+    public void addKeyEvent(boolean keyDown, int unicode, long modifiers, long nativeKeyCode) 
+    {
+        synchronized (this) {
+            mKeys.add(new Key(keyDown, unicode, modifiers, nativeKeyCode));
+        }
+    }
+
     public void nativeUpdate()
     {
         synchronized (this) {
@@ -60,9 +92,19 @@ public class BlueGinInput
                 Touch touch = (Touch) it.next();
                 Native.addTouchEvent(touch.eventType, touch.x, touch.y, touch.px, touch.py, touch.id);
             }
+
+            it = mKeys.iterator();
+            while (it.hasNext()) {
+                Key key = (Key) it.next();
+                Native.addKeyEvent(key.keyDown, key.unicode, (int) key.modifiers, (int) key.keycode);
+            }
         }
+
         Native.setTouches();
+        Native.setKeys();
+
         mTouches.clear();
+        mKeys.clear();
 
         float[] acc = mAccel.getValues();
         Native.setAccelerometer(acc[0], acc[1], acc[2]);
