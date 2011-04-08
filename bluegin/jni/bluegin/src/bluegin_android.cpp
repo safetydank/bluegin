@@ -41,7 +41,7 @@ void cache_method_ids(JNIEnv* env)
             "(Z)V");
     MID_MUSIC_PLAY = env->GetStaticMethodID(jBlueGin,
 	       "music_play",
-	       "(Ljava/lang/String;)V");
+	       "(Ljava/lang/String;Z)V");
     MID_MUSIC_STOP = env->GetStaticMethodID(jBlueGin,
 	       "music_stop",
 	       "()V");
@@ -128,11 +128,11 @@ void bluegin_keyboard_toggle(bool show)
     env->CallStaticVoidMethod(jBlueGin, MID_KEYBOARD_TOGGLE, (jboolean) show);
 }
 
-void bluegin_music_play(const char* fname)
+void bluegin_music_play(const char* fname, bool looping)
 {
     JNIEnv *env = get_jnienv();
     jstring jfname  = env->NewStringUTF(fname);
-    env->CallStaticVoidMethod(jBlueGin, MID_MUSIC_PLAY, jfname);
+    env->CallStaticVoidMethod(jBlueGin, MID_MUSIC_PLAY, jfname, (jboolean) looping);
 }
 
 void bluegin_music_stop()

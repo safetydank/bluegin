@@ -147,7 +147,7 @@ void  bluegin_keyboard_toggle(bool show);
  *
  * @param fname the music resource
  */
-void  bluegin_music_play(const char* fname);
+void  bluegin_music_play(const char* fname, bool looping=true);
 
 /**
  * Stop all playing music

@@ -90,7 +90,7 @@ public class BlueGinAndroid
     }
 
     // JNI to play music, etc
-    public static void music_play(String fname) 
+    public static void music_play(String fname, boolean looping) 
     {
         BlueGinActivity app = BlueGinActivity.app;
 
@@ -100,10 +100,9 @@ public class BlueGinAndroid
             Log.v(TAG, "Playing music file: "+fname);
             AssetFileDescriptor fd = am.openFd(fname);
             app.mediaPlayer = new MediaPlayer();
-            app.mediaPlayer.setDataSource(fd.getFileDescriptor(),
-                    fd.getStartOffset(), fd.getLength());
+            app.mediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
             fd.close();
-            app.mediaPlayer.setLooping(true);
+            app.mediaPlayer.setLooping(looping);
             app.mediaPlayer.prepare();
             app.mediaPlayer.start();
         } catch(IOException e) { 
