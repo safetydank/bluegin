@@ -162,7 +162,16 @@ void  bluegin_music_stop();
 bool  bluegin_music_is_playing();
 
 /**
- * Initialize BlueGin sound system
+ * Set music playback volume
+ *
+ * @param volumeL left speaker volume in the range [0, 1]
+ * @param volumeR right speaker volume in the range [0, 1]
+ */
+void bluegin_music_volume(float volumeL, float volumeR);
+
+/**
+ * Initialize BlueGin sound system.
+ * On Android this clears the underlying SoundPool.
  */
 void  bluegin_sound_init();
 

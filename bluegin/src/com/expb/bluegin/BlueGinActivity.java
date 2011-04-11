@@ -20,6 +20,8 @@ import android.media.SoundPool;
 import com.expb.bluegin.BlueGinView;
 import com.expb.bluegin.TouchEventHandler;
 
+import java.util.ArrayList;
+
 public class BlueGinActivity extends Activity
 {
     private static final int MAX_STREAMS = 16;
@@ -29,6 +31,7 @@ public class BlueGinActivity extends Activity
     //  globals for use in static methods
     public static BlueGinActivity app = null;
 
+    public  ArrayList<MediaPlayer> mediaPlayers = null;
     public  MediaPlayer mediaPlayer = null;
     public  SoundPool   soundPool   = null;
 
@@ -54,6 +57,9 @@ public class BlueGinActivity extends Activity
         mInput        = new BlueGinInput(getApplication());
         mTouchHandler = TouchEventHandler.create(mInput);
         mView         = new BlueGinView(getApplication(), mInput);
+
+        mediaPlayers  = new ArrayList<MediaPlayer>();
+
         setContentView(mView);
 
         Native.create();

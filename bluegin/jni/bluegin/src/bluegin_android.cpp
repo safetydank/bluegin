@@ -9,6 +9,7 @@ static jmethodID MID_KEYBOARD_TOGGLE;
 static jmethodID MID_MUSIC_PLAY;
 static jmethodID MID_MUSIC_STOP;
 static jmethodID MID_MUSIC_IS_PLAYING;
+static jmethodID MID_MUSIC_VOLUME;
 
 static jmethodID MID_SOUND_INIT;
 static jmethodID MID_SOUND_LOAD;
@@ -48,6 +49,9 @@ void cache_method_ids(JNIEnv* env)
     MID_MUSIC_IS_PLAYING = env->GetStaticMethodID(jBlueGin,
 	       "music_is_playing",
 	       "()Z");
+    MID_MUSIC_VOLUME = env->GetStaticMethodID(jBlueGin,
+           "music_volume",
+           "(FF)V");
     MID_SOUND_INIT = env->GetStaticMethodID(jBlueGin,
             "sound_init",
             "()V");
@@ -146,6 +150,12 @@ bool bluegin_music_is_playing()
     JNIEnv *env = get_jnienv();
     jboolean playing = env->CallStaticBooleanMethod(jBlueGin, MID_MUSIC_IS_PLAYING);
     return playing;
+}
+
+void bluegin_music_volume(float volumeL, float volumeR)
+{
+    JNIEnv *env = get_jnienv();
+    env->CallStaticVoidMethod(jBlueGin, MID_MUSIC_VOLUME, volumeL, volumeR);
 }
 
 void bluegin_sound_init()

@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.microedition.khronos.opengles.GL10;
 
+import java.util.Iterator;
+
 import com.expb.bluegin.BlueGinActivity;
 
 public class BlueGinAndroid
@@ -31,6 +33,9 @@ public class BlueGinAndroid
 
     private static GL10 mGL = null;
     public static void setGL(GL10 gl) { mGL = gl; }
+
+    private static float musicVolumeL;
+    private static float musicVolumeR;
 
     // Java callbacks, called from native code
     public static int load_texture(String fname, int[] dim) 
@@ -99,12 +104,23 @@ public class BlueGinAndroid
         try {
             Log.v(TAG, "Playing music file: "+fname);
             AssetFileDescriptor fd = am.openFd(fname);
-            app.mediaPlayer = new MediaPlayer();
-            app.mediaPlayer.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+            MediaPlayer mp = new MediaPlayer();
+            mp.setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getLength());
+            mp.setVolume(musicVolumeL, musicVolumeR);
             fd.close();
-            app.mediaPlayer.setLooping(looping);
-            app.mediaPlayer.prepare();
-            app.mediaPlayer.start();
+            mp.setLooping(looping);
+            mp.prepare();
+            mp.start();
+            app.mediaPlayers.add(mp);
+
+            //  clear any stopped music streams
+            Iterator itr = BlueGinActivity.app.mediaPlayers.iterator();
+            while (itr.hasNext()) {
+                MediaPlayer player = (MediaPlayer) itr.next();
+                if (player != null && !player.isPlaying()) {
+                    itr.remove();
+                }
+            }
         } catch(IOException e) { 
             Log.v(TAG, "Error playing music file: "+fname);
         }
@@ -112,24 +128,62 @@ public class BlueGinAndroid
 
     public static void music_stop() 
     {
-        if (BlueGinActivity.app.mediaPlayer == null) { return; }
-        BlueGinActivity.app.mediaPlayer.stop();
+        //  if (BlueGinActivity.app.mediaPlayer == null) { return; }
+        // BlueGinActivity.app.mediaPlayer.stop();
+
+        Iterator itr = BlueGinActivity.app.mediaPlayers.iterator();
+        while (itr.hasNext()) {
+            MediaPlayer player = (MediaPlayer) itr.next();
+            if (player != null && player.isPlaying()) {
+                player.stop();
+                itr.remove();
+            }
+        }
     }
 
     public static boolean music_is_playing()
     {
-        if (BlueGinActivity.app.mediaPlayer == null) { return false; }
-        return BlueGinActivity.app.mediaPlayer.isPlaying();
+        // if (BlueGinActivity.app.mediaPlayer == null) { return false; }
+        // return BlueGinActivity.app.mediaPlayer.isPlaying();
+
+        Iterator itr = BlueGinActivity.app.mediaPlayers.iterator();
+        while (itr.hasNext()) {
+            MediaPlayer player = (MediaPlayer) itr.next();
+            if (player != null && player.isPlaying()) {
+                return true;
+            }
+            else {
+                itr.remove();
+            }
+        }
+        return false;
     }
 
-    public static void music_volume(float v) 
+    public static void music_volume(float volumeL, float volumeR) 
     {
-        if (BlueGinActivity.app.mediaPlayer == null) { return; }
-        BlueGinActivity.app.mediaPlayer.setVolume(v,v);
+        // if (BlueGinActivity.app.mediaPlayer == null) { return; }
+        // BlueGinActivity.app.mediaPlayer.setVolume(volumeL,volumeR);
+        musicVolumeL = volumeL;
+        musicVolumeR = volumeR;
+
+        Iterator itr = BlueGinActivity.app.mediaPlayers.iterator();
+        while (itr.hasNext()) {
+            MediaPlayer player = (MediaPlayer) itr.next();
+            if (player != null && player.isPlaying()) {
+                player.setVolume(volumeL, volumeR);
+            }
+            else {
+                itr.remove();
+            }
+        }
     }
 
     public static void sound_init()
     {
+        //  initialize volume settings
+        musicVolumeL = 1.0f;
+        musicVolumeR = 1.0f;
+
         BlueGinActivity.app.resetSoundPool();
         BlueGinActivity.app.initSoundPool();
     }
