@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -56,6 +57,66 @@ public class BlueGinAndroid
             Log.v(TAG, "load_texture: "+fname+" texid: "+textureID);
             return textureID;
         } catch(IOException e) {
+            return 0;
+        }
+    }
+
+    private static int nearest_power_of_2(int n) 
+    {
+        if(n > 1024) return 2048;
+        if(n > 512) return 1024;
+        if(n > 256) return 512;
+        if(n > 128) return 256;
+        if(n > 64) return 128;
+        if(n > 32) return 64;
+        if(n > 16) return 32;
+        if(n > 8) return 16;
+        if(n > 4) return 8;
+        if(n > 2) return 4;
+        if(n > 1) return 2;
+        return 1;
+    }
+
+    // Load a non-power-of-two texture and create a POT texture
+    // XXX combine with load_texture?
+    public static int load_texture_npot(String fname, int[] dim)
+    {
+        AssetManager am = BlueGinActivity.app.getAssets(); 
+
+        try {
+            InputStream stream = am.open(fname);
+            Bitmap original = BitmapFactory.decodeStream(stream);
+            int origWidth  = dim[0] = original.getWidth();
+            int origHeight = dim[1] = original.getHeight();
+
+            if (origWidth > 2048 || origHeight > 2048) {
+                Log.v(TAG, "Error: texture too large for npot (>2048 pixels long/high)");
+                return 0;
+            }
+
+            int width  = dim[2] = nearest_power_of_2(origWidth);
+            int height = dim[3] = nearest_power_of_2(origHeight);
+
+            Bitmap bitmap;
+
+            if (width == origWidth && height == origHeight) {
+                bitmap = original;
+            }
+            else {
+                bitmap = Bitmap.createBitmap(width, height, original.getConfig());
+                Canvas canvas = new Canvas(bitmap);
+                canvas.drawBitmap(original, 0, 0, null);
+            }
+
+            int[] textures = new int[1];
+            mGL.glGenTextures(1, textures, 0);
+            int textureID = textures[0];
+            mGL.glBindTexture(GL10.GL_TEXTURE_2D, textureID);
+            GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+            Log.v(TAG, "load_texture: "+fname+" texid: "+textureID);
+            return textureID;
+        } catch(IOException e) {
+            Log.v(TAG, "Error loading texture "+fname+", null returned");
             return 0;
         }
     }

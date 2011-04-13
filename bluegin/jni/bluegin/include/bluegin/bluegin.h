@@ -130,6 +130,20 @@ typedef boost::uint32_t index_t;
 int   bluegin_load_texture(const char *s, int* width, int* height);
 
 /**
+ * Load a named texture asset into a texture with dimensions that are a 
+ * power-of-two (POT)
+ *
+ * Useful for GL implementations that do not support NPOT textures
+ *
+ * @param s the name of the texture asset
+ * @param width pointer to an int that will store the texture width
+ * @param height pointer to an int that will store the texture height
+ * @return OpenGL texture ID
+ */
+int bluegin_load_texture_npot(const char *s, int* width, int* height, 
+                              int* texWidth, int* texHeight);
+
+/**
  * Load a named resource as a raw byte array
  *
  * @param s the name of the resource

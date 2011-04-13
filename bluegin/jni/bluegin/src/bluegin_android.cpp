@@ -2,6 +2,7 @@
 
 //  Java method IDs
 static jmethodID MID_LOAD_TEXTURE;
+static jmethodID MID_LOAD_TEXTURE_NPOT;
 static jmethodID MID_LOAD_RESOURCE;
 
 static jmethodID MID_KEYBOARD_TOGGLE;
@@ -33,6 +34,9 @@ void cache_method_ids(JNIEnv* env)
 
     MID_LOAD_TEXTURE = env->GetStaticMethodID(jBlueGin,
 	       "load_texture",
+	       "(Ljava/lang/String;[I)I");
+    MID_LOAD_TEXTURE_NPOT = env->GetStaticMethodID(jBlueGin,
+            "load_texture_npot",
 	       "(Ljava/lang/String;[I)I");
     MID_LOAD_RESOURCE = env->GetStaticMethodID(jBlueGin,
 	       "load_resource",
@@ -98,6 +102,28 @@ int bluegin_load_texture(const char *s, int* width, int* height)
     env->GetIntArrayRegion(dim, 0, 2, ndim);
     *width = ndim[0]; *height = ndim[1];
     Log("bluegin_load_texture: received dims %d %d", *width, *height);
+    
+    return ret;
+}
+
+int bluegin_load_texture_npot(const char *s, int* width, int* height, int* texWidth, int* texHeight) 
+{
+    JNIEnv *env = get_jnienv();
+
+    // there could be some exception handling happening here, but there isn't
+    jint ret;
+
+    //  Texture dimensions [w, h]
+    jintArray dim = env->NewIntArray(4);
+    jstring mystr = env->NewStringUTF(s);
+    ret = env->CallStaticIntMethod(jBlueGin, MID_LOAD_TEXTURE_NPOT, mystr, dim);
+
+    //  Read the texture dimensions from modified dim array
+    int ndim[4];
+    env->GetIntArrayRegion(dim, 0, 4, ndim);
+    *width = ndim[0]; *height = ndim[1]; *texWidth = ndim[2]; *texHeight = ndim[3];
+    Log("bluegin_load_texture_npot: received dims %d %d tex %d %d", 
+            *width, *height, *texWidth, *texHeight);
     
     return ret;
 }
