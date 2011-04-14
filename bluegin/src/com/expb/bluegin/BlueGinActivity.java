@@ -1,6 +1,8 @@
 package com.expb.bluegin;
 
 import android.os.Bundle;
+import android.os.PowerManager.WakeLock;
+
 import android.app.Activity;
 import android.util.Log;
 
@@ -47,6 +49,8 @@ public class BlueGinActivity extends Activity
     {
         app = this;
         super.onCreate(savedInstanceState);
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
@@ -132,6 +136,13 @@ public class BlueGinActivity extends Activity
 
     public synchronized boolean onKeyDown(int keycode, KeyEvent e) 
     {
+
+        if (keycode == KeyEvent.KEYCODE_VOLUME_UP || 
+            keycode == KeyEvent.KEYCODE_VOLUME_DOWN ||
+            keycode == KeyEvent.KEYCODE_VOLUME_MUTE) {
+            return super.onKeyDown(keycode, e);
+        }
+
         Log.v("keydown", Character.toString(Character.toChars(e.getUnicodeChar())[0]));
         int unicodeChar = e.getUnicodeChar();
         // XXX translate and send modifiers
