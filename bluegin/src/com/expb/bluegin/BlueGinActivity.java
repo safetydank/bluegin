@@ -138,8 +138,7 @@ public class BlueGinActivity extends Activity
     {
 
         if (keycode == KeyEvent.KEYCODE_VOLUME_UP || 
-            keycode == KeyEvent.KEYCODE_VOLUME_DOWN ||
-            keycode == KeyEvent.KEYCODE_VOLUME_MUTE) {
+            keycode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             return super.onKeyDown(keycode, e);
         }
 
