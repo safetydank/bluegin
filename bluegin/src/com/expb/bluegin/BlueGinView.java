@@ -26,7 +26,7 @@ class BlueGinView extends GLSurfaceView
     {
         super(context);
         mInput = input;
-        init(true, 1, 0);
+        init(false, 1, 0);
     }
 
     public BlueGinView(Context context, boolean translucent, int depth, int stencil) 
