@@ -70,7 +70,8 @@ JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_cleanup(JNIEnv* env)
 
 JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_pause(JNIEnv* env)
 {
-    theApp__->doPause();
+    if (theApp__)
+        theApp__->doPause();
 }
 
 JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_resume(JNIEnv* env)
