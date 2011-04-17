@@ -19,6 +19,7 @@ class BlueginApp : public ci::app::AppBasic
 {
 public:
     virtual void pause() { }
+    virtual void resume() { }
 
     inline double getDT() { return 1.0/60.0; }
 
@@ -33,6 +34,7 @@ public:
 
     void doTouch();             // emulate touch from mouse input
     void doPause();
+    void doResume();
     void doAccelerated(float x, float y, float z);
 
     void mouseDown(ci::app::MouseEvent event);
@@ -74,7 +76,6 @@ public:
     virtual void setup()   = 0;
 	virtual void update()  = 0;
 	virtual void draw()    = 0;
-    virtual void pause() { }
 
     //  Input handlers
     virtual void accelerated(ci::app::AccelEvent event) { }
@@ -90,6 +91,9 @@ public:
     int   getWindowHeight();
 
     //  Optional overrides
+    virtual void pause() { }
+    virtual void resume() { }
+
     virtual void resize(cinder::app::ResizeEvent event) { }
 
     inline float getElapsedSeconds() { return mElapsed / 1000.0f; }
@@ -101,6 +105,7 @@ public:
     void doResize(int width, int height);
     void doAccelerated(float x, float y, float z);
     void doPause();
+    void doResume();
     void doTouch();
     void doKeys();
 

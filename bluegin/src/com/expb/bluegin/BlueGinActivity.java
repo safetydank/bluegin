@@ -1,19 +1,16 @@
 package com.expb.bluegin;
 
-import android.os.Bundle;
-import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
 import android.app.Activity;
-import android.util.Log;
+import android.content.Context;
+
+import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-
-import android.content.res.AssetManager;
-import android.content.res.AssetFileDescriptor;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -40,6 +37,8 @@ public class BlueGinActivity extends Activity
     private BlueGinView       mView;
     private BlueGinInput      mInput;
     private TouchEventHandler mTouchHandler;
+
+    WakeLock mWakeLock = null;
 
     private boolean mKeyboardVisible = false;
 
@@ -77,11 +76,23 @@ public class BlueGinActivity extends Activity
     {
         // Log.v(TAG, "XXX onResume()");
         super.onResume();
+        Native.resume();
+
+        //  acquire wake lock, prevent dimming
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Bluegin wake lock");
+        mWakeLock.acquire();
     }
 
     @Override
     protected void onPause()
     {
+        if (mWakeLock != null && mWakeLock.isHeld())
+        {
+            mWakeLock.release();
+            mWakeLock = null;
+        }
+
         // Log.v(TAG, "XXX onPause()");
         super.onPause();
 

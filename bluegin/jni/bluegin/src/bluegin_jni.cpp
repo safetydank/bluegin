@@ -73,6 +73,12 @@ JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_pause(JNIEnv* env)
     theApp__->doPause();
 }
 
+JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_resume(JNIEnv* env)
+{
+    if (theApp__)
+        theApp__->doResume();
+}
+
 JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_setScreenSize(JNIEnv* env,
     jobject thiz, jint width, jint height)
 {

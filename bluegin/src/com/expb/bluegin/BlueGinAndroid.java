@@ -239,6 +239,20 @@ public class BlueGinAndroid
         }
     }
 
+    public static void music_pause(boolean resume)
+    {
+        Iterator itr = BlueGinActivity.app.mediaPlayers.iterator();
+        while (itr.hasNext()) {
+            MediaPlayer player = (MediaPlayer) itr.next();
+            if (player != null && !resume) {
+                player.pause();
+            }
+            else if (player != null && resume) {
+                player.start();
+            }
+        }
+    }
+
     public static void sound_init()
     {
         //  initialize volume settings

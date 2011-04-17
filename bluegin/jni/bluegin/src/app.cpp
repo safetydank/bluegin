@@ -37,7 +37,7 @@ void BlueginApp::doResize(int width, int height)
 
 void BlueginApp::doSetup()
 {
-    setup();
+    this->setup();
 }
 
 void BlueginApp::doUpdate(int dt)
@@ -49,7 +49,7 @@ void BlueginApp::doUpdate(int dt)
 
 void BlueginApp::doDraw()
 {
-    draw();
+    this->draw();
 }
 
 float BlueginApp::getWindowAspectRatio()
@@ -175,6 +175,12 @@ void BlueginApp::doKeys()
 
 void BlueginApp::doPause()
 {
-    pause();
+    this->paused();
+}
+
+void BlueginApp::doResume()
+{
+    Log("XXX doResume()");
+    this->resumed();
 }
 

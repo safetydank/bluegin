@@ -184,6 +184,14 @@ bool  bluegin_music_is_playing();
 void bluegin_music_volume(float volumeL, float volumeR);
 
 /**
+ * Pause/resume streamed music
+ *
+ * @param resume if false the currently playing music streams are paused, 
+ * otherwise a resume is attempted
+ */
+void bluegin_music_pause(bool resume=false);
+
+/**
  * Initialize BlueGin sound system.
  * On Android this clears the underlying SoundPool.
  */

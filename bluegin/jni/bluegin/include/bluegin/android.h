@@ -17,6 +17,7 @@ extern "C" {
     JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_draw(JNIEnv* env);
     JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_cleanup(JNIEnv* env);
     JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_pause(JNIEnv* env);
+    JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_resume(JNIEnv* env);
 
     JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_addTouchEvent(JNIEnv* env,
         jobject thiz, int eventType, float x, float y, float px, float py, int id);
