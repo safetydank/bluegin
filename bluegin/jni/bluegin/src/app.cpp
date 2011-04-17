@@ -175,12 +175,12 @@ void BlueginApp::doKeys()
 
 void BlueginApp::doPause()
 {
-    this->paused();
+    this->pause();
 }
 
 void BlueginApp::doResume()
 {
-    Log("XXX doResume()");
-    this->resumed();
+    // Log("XXX doResume()");
+    this->resume();
 }
 
