@@ -294,16 +294,22 @@ class BlueGinView extends GLSurfaceView
 
         public void onSurfaceChanged(GL10 gl, int width, int height) 
         {
-            gl.glViewport(0, 0, width, height);
-            BlueGinAndroid.setGL(gl);
-            Native.create();
+            // Log.v(TAG, "XXX onSurfaceChanged()");
+
+            //  Trigger native app onResize()
             Native.setScreenSize(width, height);
-            Native.setup();
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) 
         {
-            // Do nothing.
+            // Log.v(TAG, "XXX onSurfaceCreated()");
+
+            BlueGinAndroid.setGL(gl);
+
+            //  Instantiate new native app
+            Native.create();
+            Native.setScreenSize(mView.getWidth(), mView.getHeight());
+            Native.setup();
         }
     }
 }

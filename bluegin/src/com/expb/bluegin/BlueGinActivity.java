@@ -43,10 +43,11 @@ public class BlueGinActivity extends Activity
 
     private boolean mKeyboardVisible = false;
 
-    /** Called when the activity is (re)started. */
+    /** Called when the activity is started. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        // Log.v(TAG, "XXX onCreate()");
         app = this;
         super.onCreate(savedInstanceState);
 
@@ -56,6 +57,8 @@ public class BlueGinActivity extends Activity
     @Override
     public void onStart()
     {
+        // Log.v(TAG, "XXX onStart()");
+
         super.onStart();
         initSoundPool();
         mInput        = new BlueGinInput(getApplication());
@@ -65,8 +68,42 @@ public class BlueGinActivity extends Activity
         mediaPlayers  = new ArrayList<MediaPlayer>();
 
         setContentView(mView);
+        
+        //  Native app creation and init performed in onSurfaceCreated
+    }
 
-        Native.create();
+    @Override
+    protected void onResume()
+    {
+        // Log.v(TAG, "XXX onResume()");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause()
+    {
+        // Log.v(TAG, "XXX onPause()");
+        super.onPause();
+
+        //  Save state, go into native pause mode if implemented
+        Native.pause();
+    }
+
+    protected void onStop()
+    {
+        // Log.v(TAG, "XXX onStop()");
+        super.onStop();
+
+        //  Force hide the keyboard if visible
+        BlueGinAndroid.keyboard_toggle(false);
+
+        //  Stop and free any playing sounds
+        BlueGinAndroid.music_stop();
+        resetSoundPool();
+
+        Native.cleanup();
+
+        mInput.stop();
     }
 
     public BlueGinView getView()
@@ -82,40 +119,6 @@ public class BlueGinActivity extends Activity
     public void setKeyboardVisible(boolean on)
     {
         mKeyboardVisible = on;
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        mView.onResume();
-    }
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        mView.onPause();
-
-        //  Save state
-        Native.pause();
-    }
-
-    protected void onStop()
-    {
-        super.onStop();
-
-        Log.v(TAG, "onStop() called");
-        //  Force hide the keyboard if visible
-        BlueGinAndroid.keyboard_toggle(false);
-
-        //  Stop and free any playing sounds
-        BlueGinAndroid.music_stop();
-        resetSoundPool();
-
-        Native.cleanup();
-
-        mInput.stop();
     }
 
     public synchronized boolean onTouchEvent(final MotionEvent ev) 
