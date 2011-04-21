@@ -29,10 +29,15 @@ long getNanoTime()
     return (1e9*clock.tv_sec + clock.tv_nsec) / 1e6;
 }
 
-JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_create(JNIEnv* env)
+JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_initJNI(JNIEnv* env)
 {
     set_jnienv(env);
     cache_method_ids(env);
+    Log("JNI env pointer %d", env);
+}
+
+JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_create(JNIEnv* env)
+{
     nativeCreate();
 }
 

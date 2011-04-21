@@ -79,13 +79,22 @@ public class BlueGinAndroid
 
     // Load a non-power-of-two texture and create a POT texture
     // XXX combine with load_texture?
-    public static int load_texture_npot(String fname, int[] dim)
+    public static int load_texture_npot(String fname, int[] dim, float scale)
     {
         AssetManager am = BlueGinActivity.app.getAssets(); 
 
         try {
             InputStream stream = am.open(fname);
             Bitmap original = BitmapFactory.decodeStream(stream);
+
+            //  Perform bitmap scaling
+            if (scale != 1.0) {
+                original = Bitmap.createScaledBitmap(original,
+                        (int) (original.getWidth() * scale),
+                        (int) (original.getHeight() * scale),
+                        true);
+            }
+
             int origWidth  = dim[0] = original.getWidth();
             int origHeight = dim[1] = original.getHeight();
 

@@ -26,7 +26,7 @@ class BlueGinView extends GLSurfaceView
     {
         super(context);
         mInput = input;
-        init(false, 1, 0);
+        init(false, 0, 0);
     }
 
     public BlueGinView(Context context, BlueGinInput input, boolean translucent, int depth, int stencil) 
@@ -307,6 +307,7 @@ class BlueGinView extends GLSurfaceView
             BlueGinAndroid.setGL(gl);
 
             //  Instantiate new native app
+            Native.initJNI();
             Native.create();
             Native.setScreenSize(mView.getWidth(), mView.getHeight());
             Native.setup();

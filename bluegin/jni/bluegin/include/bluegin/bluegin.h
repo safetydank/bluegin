@@ -141,7 +141,7 @@ int   bluegin_load_texture(const char *s, int* width, int* height);
  * @return OpenGL texture ID
  */
 int bluegin_load_texture_npot(const char *s, int* width, int* height, 
-                              int* texWidth, int* texHeight);
+                              int* texWidth, int* texHeight, float scale=1.0f);
 
 /**
  * Load a named resource as a raw byte array

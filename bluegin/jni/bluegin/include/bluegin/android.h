@@ -11,6 +11,7 @@ void cache_method_ids(JNIEnv* env);
 
 extern "C" {
     //  Native functions called by Java
+    JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_initJNI(JNIEnv* env);
     JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_create(JNIEnv* env);
     JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_setup(JNIEnv* env);
     JNIEXPORT void JNICALL Java_com_expb_bluegin_Native_update(JNIEnv* env);

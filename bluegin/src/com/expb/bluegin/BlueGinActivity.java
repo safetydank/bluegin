@@ -80,18 +80,18 @@ public class BlueGinActivity extends Activity
 
         //  acquire wake lock, prevent dimming
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Bluegin wake lock");
-        mWakeLock.acquire();
+        // mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Bluegin wake lock");
+        // mWakeLock.acquire();
     }
 
     @Override
     protected void onPause()
     {
-        if (mWakeLock != null && mWakeLock.isHeld())
-        {
-            mWakeLock.release();
-            mWakeLock = null;
-        }
+        // if (mWakeLock != null && mWakeLock.isHeld())
+        // {
+        //     mWakeLock.release();
+        //     mWakeLock = null;
+        // }
 
         // Log.v(TAG, "XXX onPause()");
         super.onPause();

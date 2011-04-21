@@ -3,6 +3,7 @@ package com.expb.bluegin;
 public class Native
 {
     //  BlueGin native entry points
+    public static native void initJNI();
     public static native void create();
     public static native void setup();
     public static native void update();

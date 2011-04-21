@@ -38,7 +38,7 @@ void cache_method_ids(JNIEnv* env)
 	       "(Ljava/lang/String;[I)I");
     MID_LOAD_TEXTURE_NPOT = env->GetStaticMethodID(jBlueGin,
             "load_texture_npot",
-	       "(Ljava/lang/String;[I)I");
+	       "(Ljava/lang/String;[IF)I");
     MID_LOAD_RESOURCE = env->GetStaticMethodID(jBlueGin,
 	       "load_resource",
 	       "(Ljava/lang/String;)[B");
@@ -110,7 +110,8 @@ int bluegin_load_texture(const char *s, int* width, int* height)
     return ret;
 }
 
-int bluegin_load_texture_npot(const char *s, int* width, int* height, int* texWidth, int* texHeight) 
+int bluegin_load_texture_npot(const char *s, int* width, int* height, int* texWidth, int* texHeight,
+        float scale) 
 {
     JNIEnv *env = get_jnienv();
 
@@ -120,7 +121,7 @@ int bluegin_load_texture_npot(const char *s, int* width, int* height, int* texWi
     //  Texture dimensions [w, h]
     jintArray dim = env->NewIntArray(4);
     jstring mystr = env->NewStringUTF(s);
-    ret = env->CallStaticIntMethod(jBlueGin, MID_LOAD_TEXTURE_NPOT, mystr, dim);
+    ret = env->CallStaticIntMethod(jBlueGin, MID_LOAD_TEXTURE_NPOT, mystr, dim, (jfloat) scale);
 
     //  Read the texture dimensions from modified dim array
     int ndim[4];
