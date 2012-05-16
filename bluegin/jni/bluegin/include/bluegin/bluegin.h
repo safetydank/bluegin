@@ -102,13 +102,8 @@ Contact - dan@expandingbrain.com
 
 #ifdef ANDROID
 #include "bluegin/android.h"
-#include "yasper.h"
+#include "boost/smart_ptr.hpp"
 #include <stdlib.h>
-namespace std {
-    //  XXX HACK to enable std::string to compile, will exit immediately on length error
-    //  (exceptions not supported with NDK)
-    inline void __stl_throw_length_error(const char*) { exit(1); };
-}
 #else
 #include "boost/smart_ptr.hpp"
 #define Log(...) ::printf(__VA_ARGS__)

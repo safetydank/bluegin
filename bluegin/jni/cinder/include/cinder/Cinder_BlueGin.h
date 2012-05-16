@@ -1,7 +1,8 @@
 #pragma once
 
 #include "bluegin/bluegin.h"
-#include "yasper.h"
+// #include "yasper.h"
+#include "boost/smart_ptr.hpp"
 
 using boost::shared_ptr;
 

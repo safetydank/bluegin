@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="bluegin" default="help">
+    <target name="jar" depends="-compile">
+        <jar destfile="bin/BlueGin.jar" basedir="bin/classes" />
+    </target>
+</project>
+

@@ -12,11 +12,11 @@ BlueGin is a C++ game engine for Android.
 Recommended setup
 -----------------
 
-BlueGin requires the Android native development kit (NDK) r5 for building.  On
+BlueGin requires the Android native development kit (NDK) r8 for building.  On
 the desktop it is linked with Cinder and Boost.  The Android runtime requires
 Boost to build.
 
-1.  Install Cinder including Boost v1.44 (or newer)
+1.  Install Cinder including Boost v1.48 (or newer)
 
 2.  Set an environment variable BOOST_SRC to point to your Boost path
     (e.g. /src/Cinder/boost) 

@@ -11,11 +11,7 @@
 #define FLXU_STATIC extern
 #endif
 
-#ifdef ANDROID
-#include "yasper.h"
-#else
 #include "boost/shared_ptr.hpp"
-#endif
 
 using std::vector;
 using boost::shared_ptr;
