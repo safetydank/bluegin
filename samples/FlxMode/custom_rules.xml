@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project name="FlxModeActivity" default="help">
-    <target name="-pre-build">
-        <copy file="../../bluegin/bin/BlueGin.jar" todir="${jar.libs.dir}" />
-    </target>
-</project>
-
-

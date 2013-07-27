@@ -26,7 +26,7 @@ Boost to build.
 % cd bluegin
 % android update project --path .     /* use android.bat on Windows */
 % ndk-build
-% ant jar
+% ant debug
 
 4.  Build individual samples
 
